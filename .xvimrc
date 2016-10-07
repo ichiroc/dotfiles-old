@@ -1,0 +1,9 @@
+set ignorecase
+inoremap <C-e> <C-o>$
+nmap <C-e> <C-o>$
+nmap <C-a> <C-o>^
+nmap tt C<C-a><C-k><ESC>
+nmap to o<C-a><C-k><ESC>
+nmap tO O<C-a><C-k><ESC>
+nmap <space>b :xccmd toggleBreakpointAtCurrentLine<CR>
+nmap <space>cm :xccmd commentAndUncommentCurrentLines<CR>

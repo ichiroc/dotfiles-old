@@ -1,0 +1,13 @@
+AllCops:
+  Includes:
+    - Rakefile
+    - config.ru
+  Excludes:
+    - db/**
+    - config/**
+    - script/**
+  TargetRubyVersion: 2.3
+Documentation:
+  Enabled: false
+AsciiComments:
+  Enabled: false
