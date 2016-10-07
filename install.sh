@@ -1,9 +1,10 @@
 #!/bin/bash
 
-ln -sf ~/dotfiles/.tmux.conf ~/.tmux.conf
-ln -sf ~/dotfiles/.screenrc ~/.screenrc
-ln -sf ~/dotfiles/.rubocop.yml ~/.rubocop.yml
-ln -sf ~/dotfiles/.ctags ~/.ctags
-ln -sf ~/dotfiles/.xvimrc ~/.xvimrc
-ln -sf ~/dotfiles/.zshrc ~/.zshrc
-ln -sf ~/dotfiles/.spacemacs.d ~/.spacemacs.d
+# Make symlink
+for arg in .tmux.conf .screenrc .rubocop.yml .ctags .xvimrc .spacemacs.d
+do
+    ln -sf ~/dotfiles/${arg} ~/${arg}
+done
+
+ln -sf ~/dotfiles/zsh/.zshrc ~/.zshrc
+ln -sf ~/dotfiles/zsh/.oh-my-zsh/custom ~/.oh-my-zsh/custom
