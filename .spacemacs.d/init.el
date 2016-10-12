@@ -310,15 +310,6 @@ you should place your code here."
                                                (skk-mode 1))))
   (add-hook 'evil-normal-state-entry-hook '(lambda () (interactive) (skk-mode -1)))
 
-
-  ;; docsets definition
-  (setq my-helm-dash-docsets '("Ruby on Rails"
-                               "Ruby"
-                               "JavaScript"
-                               "Haml"
-                               "Sass"
-                               "CSS"))
-
   ;; company-mode keybind
   (define-key company-active-map (kbd "C-n") 'company-select-next)
   (define-key company-active-map (kbd "C-p") 'company-select-previous)
