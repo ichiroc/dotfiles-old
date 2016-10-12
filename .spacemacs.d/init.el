@@ -348,23 +348,17 @@ you should place your code here."
   (spacemacs/set-leader-keys "h o" 'helm-occur)
   (evil-global-set-key 'hybrid (kbd "C-y") 'yank)
   (evil-global-set-key 'hybrid (kbd "M-y") 'helm-show-kill-ring)
+
   ;; helm-hook
-  (add-hook 'emacs-startup-hook
-            (lambda () (interactive)
-              ;; keybinds
-              (define-key helm-map (kbd "C-h") 'delete-backward-char)
-              ;;   skk keybind in helm
-              (define-key helm-map (kbd "C-j") (lambda () (interactive)
-                                                 (if skk-henkan-mode
-                                                     (skk-kakutei)
-                                                   (skk-mode 1))))
-              ;; install helm dash
-              ;; (-each (-difference  my-helm-dash-docsets (helm-dash-installed-docsets))
-              ;;   (lambda (docset)
-              ;;     (helm-dash-install-docset docset)
-              ;;     ))
-              ;; (setq helm-dash-common-docsets (helm-dash-installed-docsets))
-              ))
+  (eval-after-load "helm"
+    '(progn
+      (define-key helm-map (kbd "C-M-n") 'helm-next-source)
+      (define-key helm-map (kbd "C-M-p") 'helm-next-source)
+      (define-key helm-map (kbd "C-j") (lambda () (interactive)
+                                         (if skk-henkan-mode
+                                             (skk-kakutei)
+                                           (skk-mode 1))))
+      ))
 
   ;; markdown
   (setq markdown-command "markdown2")
