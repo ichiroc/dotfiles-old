@@ -282,10 +282,7 @@ you should place your code here."
       ))
   (spacemacs/set-leader-keys "s e" 'iedit-mode-toggle-on-function)
   (spacemacs/set-leader-keys "s E" 'evil-iedit-state/iedit-mode)
-  (evil-global-set-key 'hybrid (kbd "C-y") 'yank)
   (evil-global-set-key 'hybrid (kbd "M-y") 'helm-show-kill-ring)
-
-  ;; helm-hook
 
   ;; jsx
   (add-to-list 'auto-mode-alist '("\\.jsx$" . js2-jsx-mode))
