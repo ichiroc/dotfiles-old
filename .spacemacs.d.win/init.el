@@ -493,7 +493,7 @@ you should place your code here."
        (define-key helm-find-files-map (kbd "C-i") 'helm-execute-persistent-action)))
 
   ;; yas
-  ;(evil-global-set-key 'hybrid (kbd "c-tab") 'yas-expand)
+  (evil-global-set-key 'hybrid (kbd "M-i") 'yas-expand)
 
   ;; Oracle
   (setenv "NLS_LANG" "JAPANESE_JAPAN.JA16SJISTILDE")
