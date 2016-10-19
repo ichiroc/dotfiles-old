@@ -450,11 +450,6 @@ you should place your code here."
    ;; ruby
   ;; enh-ruby-mode
   (setq ruby-enable-enh-ruby-mode t)
-  ;; (defun ruby/init-ruby-mode ()
-  ;;   (use-package ruby-mode
-  ;;     :mode (("\\(Rake\\|Thor\\|Guard\\|Gem\\|Cap\\|Vagrant\\|Berks\\|Pod\\|Puppet\\)file\\'" . ruby-mode)
-  ;;            ("\\.\\(rb\\|rabl\\|ru\\|builder\\|rake\\|thor\\|gemspec\\|jbuilder\\)\\'" . ruby-mode))))
-
 
   ;; ddskk
   (setq skk-large-jisyo "~/skk/SKK-JISYO.L")
@@ -522,20 +517,6 @@ you should place your code here."
 
   ;; Local file
   (add-to-list 'file-coding-system-alist '("[T]F0004KE\\'" cp932-dos))
-  ;; ;; zeal-at-point
-  ;; (setq zeal-at-point-zeal-version "0.2.1")
-  ;; ;; monkey patch
-  ;; (setq zeal-at-point-zeal-program "c:/Program Files (x86)/Zeal/zeal")
-  ;; (defun zeal-at-point-run-search (search)
-  ;;   (if (executable-find zeal-at-point-zeal-program)
-  ;;       (if (version< "0.2.0" zeal-at-point-zeal-version)
-  ;;           (start-process "Zeal" nil zeal-at-point-zeal-program search)
-  ;;         (start-process "Zeal" nil zeal-at-point-zeal-program "--query" search))
-  ;;     (message "Zeal wasn't found, install it first http://zealdocs.org")))
-  ;; (global-set-key (kbd "C-c z p") 'zeal-at-point)
-  ;; ;; (add-hook 'projectile-rails-mode-hook
-  ;; ;;           (lambda () (setq zeal-at-point-docset "rails")))
-
 
   ;; jsx
   (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js2-jsx-mode))
@@ -551,13 +532,6 @@ View mode for aquaAll.log
   ;; doc-view-mode
   (defvar doc-view-ghostscript-program "c:/Program Files/gs/gs9.20/bin/gswin64.exe")
   (defvar doc-view-odf->pdf-converter-program "c:/Program Files/LibreOffice 5/program/soffice.exe")
-  ;; (define-key doc-view-mode-map "j" 'scroll-up)
-  ;; (define-key doc-view-mode-map "k" 'scroll-down)
-  ;; (define-key doc-view-mode-map "h" 'scroll-left)
-  ;; (define-key doc-view-mode-map "l" 'scroll-right)
-  ;; (define-key doc-view-mode-map "n" 'doc-view-next-page)
-  ;; (define-key doc-view-mode-map "p" 'doc-view-previous-page)
-  ;; (define-key doc-view-mode-map "K" 'doc-view-kill-buffer)
 
   )
 
