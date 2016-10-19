@@ -500,13 +500,6 @@ you should place your code here."
   ;; yas
   ;(evil-global-set-key 'hybrid (kbd "c-tab") 'yas-expand)
 
-  ;; dired
-  (defun explorer()
-    "Diredの場所をexplorerで開く"
-    (interactive)
-    (shell-command "explorer ."))
-  (evil-define-key 'normal dired-mode-map "O" 'explorer)
-
   ;; Oracle
   (setenv "NLS_LANG" "JAPANESE_JAPAN.JA16SJISTILDE")
   (autoload 'sqlplus "sqlplus" nil t)
