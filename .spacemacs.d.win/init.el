@@ -470,16 +470,15 @@ you should place your code here."
   (add-hook 'rinari-minor-mode-hook
             (lambda () (setq zeal-at-point-docset "rails")))
 
+  (defun my-skk-c-j ()
+    (interactive)
+    (if skk-henkan-mode
+        (skk-kakutei)
+      (skk-mode 1)))
   ;; C-j でひらがなモードに戻る。ただし変換中は確定にする
-  (evil-global-set-key 'hybrid (kbd "C-j") (lambda () (interactive)
-                                             (if skk-henkan-mode
-                                                 (skk-kakutei)
-                                               (skk-mode 1))))
-  ;; (add-hook 'helm-after-initialize-hook
-  ;;           (lambda () (interactive) (define-key helm-map (kbd "C-j") (lambda () (interactive)
-  ;;                                              (if skk-henkan-mode
-  ;;                                                  (skk-kakutei)
-  ;;                                                (skk-mode 1))))))
+  (evil-global-set-key 'hybrid (kbd "C-j") 'my-skk-c-j)
+  
+  ;; helm
   (eval-after-load "helm"
     '(progn
      ;; helm-map
@@ -491,8 +490,7 @@ you should place your code here."
        (define-key helm-map (kbd "C-M-n") 'helm-next-source)
        (define-key helm-map (kbd "C-M-p") 'helm-previous-source)
        (define-key helm-map (kbd "C-h") 'delete-backward-char)
-;;       (define-key helm-find-files-map (kbd "C-M-f") 'helm-quit-and-find-file)
-;;     (define-key helm-find-files-map (kbd "M-h") 'helm-find-files-up-one-level)
+       (define-key helm-map (kbd "C-j") 'my-skk-c-j)
      ))
   (eval-after-load "helm-files"
     '(progn
