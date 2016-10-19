@@ -357,13 +357,23 @@ you should place your code here."
 
   ;; org-mode
   (setq org-bullets-bullet-list '("■" "◆" "▲" "≫" "▶" "▷"))
-  ;; (setq org-bullets-bullet-list '("*"))
+  (spacemacs/set-leader-keys "C C" 'org-capture)
   (require 'org-protocol)
   (setq org-capture-templates `(
-                                ("t" "Task" entry (file+headline "~/Documents/org/tasks.org" "Inbox")
-                                 "* %^{Title}\n")
+                                ("c" "Task" entry (file+headline "~/Documents/org/tasks.org" "Inbox")
+                                 "* TODO %^{Title}\n")
                                 ("p" "Protocol" entry (file+headline "~/Documents/org/tasks.org" "Inbox")
                                  "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
+                                ("x"
+                                 "From external"
+                                 entry
+                                 (file+headline ("~/Documents/org/tasks.org") "Inbox")
+                                 "* ACTN %?%a   :outlook:
+  :PROPERTIES:
+  :CREATED_AT: %U
+  :END:
+  %c
+  %i" :empty-lines 1 t TODO)
                                 ))
   (setq org-refile-targets '((nil  :maxlevel . 6)))
 
