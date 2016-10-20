@@ -315,7 +315,7 @@ values."
    ;; `trailing' to delete only the whitespace at end of lines, `changed'to
    ;; delete only whitespace for changed lines or `nil' to disable cleanup.
    ;; (default nil)
-   dotspacemacs-whitespace-cleanup t
+   dotspacemacs-whitespace-cleanup 'all
    ))
 
 (defun dotspacemacs/user-init ()
@@ -472,7 +472,7 @@ you should place your code here."
       (skk-mode 1)))
   ;; C-j でひらがなモードに戻る。ただし変換中は確定にする
   (evil-global-set-key 'hybrid (kbd "C-j") 'my-skk-c-j)
-  
+
   ;; helm
   (eval-after-load "helm"
     '(progn
