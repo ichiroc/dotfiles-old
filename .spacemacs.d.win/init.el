@@ -477,10 +477,7 @@ you should place your code here."
   (eval-after-load "helm"
     '(progn
      ;; helm-map
-       (define-key helm-map (kbd "C-j") (lambda () (interactive)
-                                          (if skk-henkan-mode
-                                              (skk-kakutei)
-                                            (skk-mode 1))))
+       (define-key helm-map (kbd "C-j") 'my-skk-c-j)
        (spacemacs/set-leader-keys "s o" 'helm-occur)
        (define-key helm-map (kbd "C-M-n") 'helm-next-source)
        (define-key helm-map (kbd "C-M-p") 'helm-previous-source)
@@ -489,8 +486,13 @@ you should place your code here."
      ))
   (eval-after-load "helm-files"
     '(progn
+       (define-key helm-map (kbd "C-j") 'my-skk-c-j)
        (define-key helm-find-files-map (kbd "C-h") 'helm-ff-delete-char-backward)
        (define-key helm-find-files-map (kbd "C-i") 'helm-execute-persistent-action)))
+  (eval-after-load "helm-org"
+    '(progn
+       (define-key helm-map (kbd "C-j") 'my-skk-c-j)
+       ))
 
   ;; yas
   (evil-global-set-key 'hybrid (kbd "M-i") 'yas-expand)
