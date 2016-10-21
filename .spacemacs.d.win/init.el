@@ -358,6 +358,7 @@ you should place your code here."
   ;; org-mode
   (setq org-bullets-bullet-list '("■" "◆" "▲" "≫" "▶" "▷"))
   (spacemacs/set-leader-keys "C C" 'org-capture)
+  (spacemacs/set-leader-keys "o c" 'org-capture)
   (require 'org-protocol)
   (setq org-capture-templates `(
                                 ("c" "Task" entry (file+headline "~/Documents/org/tasks.org" "Inbox")
