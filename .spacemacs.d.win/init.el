@@ -372,6 +372,10 @@ you should place your code here."
   (setq org-agenda-files '("~/Documents/org/tasks.org"))
   (setq org-todo-keywords
         '((sequence "*MSN(m)" "TODO(t)" "WAIT(w)" "DELEGATE(d)" "|" "DEFFER(d)" "CANCELED(c)" "DONE(x)")))
+  ;; for org-protocol outlook
+  (add-to-list 'org-link-types "outlook")
+  (setq org-link-types-re
+        "\\`\\(outlook\\|b\\(?:bdb\\|ibtex\\)\\|do\\(?:cview\\|i\\)\\|elisp\\|f\\(?:ile\\(?:\\+\\(?:\\(?:emac\\|sy\\)s\\)\\)?\\|tp\\)\\|gnus\\|h\\(?:elp\\|ttps?\\)\\|i\\(?:nfo\\|rc\\)\\|m\\(?:ailto\\|\\(?:essag\\|h\\)e\\)\\|news\\|orgit\\(?:-\\(?:log\\|rev\\)\\)?\\|\\(?:rmai\\|shel\\)l\\):")
 
   (defvar my-org-clock-in-shell-buffer-name "*ORG-CLOCK-IN-BUFFER*")
   (add-hook 'org-clock-in-hook '(lambda () (interactive)
