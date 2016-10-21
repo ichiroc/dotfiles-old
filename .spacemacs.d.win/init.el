@@ -364,22 +364,10 @@ you should place your code here."
   (setq org-capture-templates `(
                                 ("c" "Task" entry (file+headline "~/Documents/org/tasks.org" "Inbox")
                                  "* TODO %^{Title}\n")
-                                ("o" "Protocol" entry (file+headline "~/Documents/org/tasks.org" "Inbox")
+                                ("p" "Protocol" entry (file+headline "~/Documents/org/tasks.org" "Inbox")
                                  "* TODO %?%a")
                                 ))
   (setq org-refile-targets '((nil  :maxlevel . 6)))
-
-  (add-to-list 'org-capture-templates
-               '("x"
-                  "From external"
-                  entry
-                  (file+headline ("~/Documents/org/tasks.org") "Inbox")
-                  "* ACTN %?%a   :outlook:
-  :PROPERTIES:
-  :CREATED_AT: %U
-  :END:
-  %c
-  %i" :empty-lines 1 t TODO))
 
   (setq org-agenda-files '("~/Documents/org/tasks.org"))
   (setq org-todo-keywords
