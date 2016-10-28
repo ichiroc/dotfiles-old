@@ -323,6 +323,12 @@ you should place your code here."
   ;; General
   (setq truncate-lines t)
   (setq mac-command-modifier 'meta)
+
+  ;; Indent mode
+  (indent-guide-global-mode t)
+  (setq indent-guide-delay 1)
+  (setq indent-guide-recursive t)
+
   ;; 見にくいので縦にウィンドウを分割するのを抑止
   (setq split-width-threshold nil)
   ;; General keybind
@@ -399,6 +405,13 @@ you should place your code here."
   (spacemacs/set-leader-keys "a e T" 'geeknote-find-tags)
   (spacemacs/set-leader-keys "a e n" 'geeknote-notebook-list)
   (spacemacs/set-leader-keys "a e N" 'geeknote-find-in-notebook)
+
+  ;; org-mode
+  (setq org-bullets-bullet-list '("■" "◆" "▲" "≫" "▶" "▷"))
+  (spacemacs/set-leader-keys "o c" 'org-capture)
+
+  (setq org-refile-targets '((nil  :maxlevel . 6)))
+
 
   ;; helm
   ;;  key
