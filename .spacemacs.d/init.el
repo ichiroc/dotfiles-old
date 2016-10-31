@@ -383,6 +383,8 @@ you should place your code here."
 # --
 $0")
 
+  ;; ruby
+  (setq ruby-enable-enh-ruby-mode t)
 
   ;;  key
   (setq skk-sticky-key ";")
