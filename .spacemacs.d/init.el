@@ -45,7 +45,7 @@ values."
      markdown
      org
      ruby-on-rails
-     ruby
+     (ruby :variables ruby-enable-enh-ruby-mode t)
      javascript
      html
      react
@@ -382,9 +382,6 @@ you should place your code here."
 # ^ non-nil の場合にときに実行される
 # --
 $0")
-
-  ;; ruby
-  (setq ruby-enable-enh-ruby-mode t)
 
   ;;  key
   (setq skk-sticky-key ";")
