@@ -73,6 +73,7 @@ values."
                                       ox-gfm
                                       ox-qmd
                                       yari
+                                      helm-dash
                                       )
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '()
@@ -365,6 +366,23 @@ you should place your code here."
 
   ;; yas
   (evil-global-set-key 'hybrid (kbd "M-i") 'yas-expand)
+  ;; yasnippet
+  (setq yas-new-snippet-default "\
+# -*- mode: snippet -*-
+# name: $1
+# ^ 一行説明
+# key: ${2:${1:$(yas--key-from-desc yas-text)}}
+# ^ expand が反応する文字列
+# binding: ${3:C-c m}
+# expand-env: ${4:((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))}
+# ^ ワンタイムでセットされる変数
+# group: ${5:group-name}
+# ^ メニュ- 等で使用される文字列
+# condition: ${6:t}
+# ^ non-nil の場合にときに実行される
+# --
+$0")
+
 
   ;;  key
   (setq skk-sticky-key ";")
