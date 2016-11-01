@@ -531,6 +531,7 @@ View mode for aquaAll.log
  '(ansi-color-faces-vector
    [default default default italic underline success warning error])
  '(evil-want-Y-yank-to-eol nil)
+ '(magit-git-executable "c:/Program Files/Git/bin/git.exe")
  '(org-enforce-todo-checkbox-dependencies t)
  '(org-enforce-todo-dependencies t)
  '(org-hierarchical-todo-statistics nil)
