@@ -94,3 +94,4 @@ eval "$(rbenv init -)"
 
 alias r="bundle exec rails"
 alias be="bundle exec"
+alias h="heroku"
