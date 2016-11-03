@@ -429,7 +429,6 @@ $0")
 
   (setq org-refile-targets '((nil  :maxlevel . 6)))
 
-
   ;; helm
   ;;  key
   (spacemacs/set-leader-keys "h o" 'helm-occur)
@@ -465,6 +464,10 @@ $0")
                  crossorigin=\"anonymous\"></script>
          <style type=\"text/css\"> body{ padding: 2em} </style>"
         )
+
+  ;; projectile
+  (projectile-rails-global-mode)
+
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
