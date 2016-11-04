@@ -363,6 +363,8 @@ you should place your code here."
       (skk-mode 1)))
   ;; C-j でひらがなモードに戻る。ただし変換中は確定にする
   (evil-global-set-key 'hybrid (kbd "C-j") 'my-skk-c-j)
+  ;; delete キーで文字が削除できなかったので再マップ
+  (evil-define-key 'hybrid skk-j-mode-map (kbd "<backspace>") 'backward-delete-char)
 
   ;; yas
   (evil-global-set-key 'hybrid (kbd "M-i") 'yas-expand)
