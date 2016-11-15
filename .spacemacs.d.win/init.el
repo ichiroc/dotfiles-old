@@ -44,6 +44,7 @@ values."
      themes-megapack
      emacs-lisp
      auto-completion
+     dash
      emacs-lisp
      git
      markdown
