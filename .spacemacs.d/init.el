@@ -363,6 +363,8 @@ you should place your code here."
       (skk-mode 1)))
   ;; C-j でひらがなモードに戻る。ただし変換中は確定にする
   (evil-global-set-key 'hybrid (kbd "C-j") 'my-skk-c-j)
+  ;; delete キーで文字が削除できなかったので再マップ
+  (evil-define-key 'hybrid skk-j-mode-map (kbd "<backspace>") 'backward-delete-char)
 
   ;; yas
   (evil-global-set-key 'hybrid (kbd "M-i") 'yas-expand)
@@ -429,7 +431,6 @@ $0")
 
   (setq org-refile-targets '((nil  :maxlevel . 6)))
 
-
   ;; helm
   ;;  key
   (spacemacs/set-leader-keys "h o" 'helm-occur)
@@ -465,6 +466,10 @@ $0")
                  crossorigin=\"anonymous\"></script>
          <style type=\"text/css\"> body{ padding: 2em} </style>"
         )
+
+  ;; projectile
+  (projectile-rails-global-mode)
+
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
