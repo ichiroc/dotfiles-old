@@ -7,7 +7,7 @@
 You should not put any user code in this function besides modifying the variable
 values."
   (setq-default
-   ;; Basjjjjstribution to use. This is a layer contained in the directory
+   ;; Base distribution to use. This is a layer contained in the directory
    ;; `+distribution'. For now available distributions are `spacemacs-base'
    ;; or `spacemacs'. (default 'spacemacs)
    dotspacemacs-distribution 'spacemacs
@@ -31,42 +31,33 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
-     windows-scripts
-     yaml
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
-     helm
-     ;; auto-completion
-     ;; better-defaults
-     themes-megapack
-     emacs-lisp
      auto-completion
+     ;; better-defaults
+     dash
+     helm
      emacs-lisp
      git
      markdown
-     (org :variables org-enable-reveal-js-support t)
+     org
+     ruby-on-rails
      (ruby :variables ruby-enable-enh-ruby-mode t)
      javascript
-     sql
-     swift
-     noren
-     vb
-     ruby-on-rails
      html
+     react
+     yaml
+     evernote
      chrome
-     csv
-     ;; git
-     ;; markdown
-     ;; org
      ;; (shell :variables
      ;;        shell-default-height 30
      ;;        shell-default-position 'bottom)
      ;; spell-checking
-     ;; syntax-checking
-     ;; version-control
+     syntax-checking
+     version-control
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -74,23 +65,17 @@ values."
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(
                                       edbi
-                                      (aqua-all-log-mode :location local)
                                       ddskk
-                                      imenu-list
-                                      ox-reveal
-                                      edit-server
                                       enh-ruby-mode
-                                      zeal-at-point
-                                      csv-nav
-                                      calfw
-                                      yaml-mode
-                                      ;;                                      (visual-basic-mode :location (recipe :fetcher wiki))
-                                      japanese-holidays
-                                      typing
+                                      coffee-mode
+                                      js2-mode
+                                      ox-reveal
+                                      ox-gfm
+                                      ox-qmd
+                                      yari
+                                      helm-dash
                                       )
-   ;; A list of packages that cannot be updated.
-   dotspacemacs-frozen-packages '()
-   ;; A list of packages that will not be installed and loaded.
+   ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '()
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
@@ -152,23 +137,27 @@ values."
    ;; List sizes may be nil, in which case
    ;; `spacemacs-buffer-startup-lists-length' takes effect.
    ;; (default nil)
-   dotspacemacs-startup-lists '(agenda todos recents projects bookmarks)
+   dotspacemacs-startup-lists '(projects recents bookmarks)
    ;; True if the home buffer should respond to resize events.
    dotspacemacs-startup-buffer-responsive t
    ;; Default major mode of the scratch buffer (default `text-mode')
-   dotspacemacs-scratch-mode 'text-mode
+   dotspacemacs-scratch-mode 'lisp-interaction-mode
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(monokai
-                         spacemacs-dark
-                         spacemacs-light)
+   dotspacemacs-themes '(spacemacs-dark
+                         spacemacs-light
+                         solarized-light
+                         solarized-dark
+                         leuven
+                         monokai
+                         zenburn)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
-   ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
-   ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("TakaoGothic"
-                               :size 15
+   ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
+   ;; size to make separators look not too crappy.
+   dotspacemacs-default-font '("Ricty Diminished"
+                               :size 16
                                :weight normal
                                :width normal
                                :powerline-scale 1.1)
@@ -255,14 +244,14 @@ values."
    dotspacemacs-loading-progress-bar t
    ;; If non nil the frame is fullscreen when Emacs starts up. (default nil)
    ;; (Emacs 24.4+ only)
-   dotspacemacs-fullscreen-at-startup nil
+   dotspacemacs-fullscreen-at-startup t
    ;; If non nil `spacemacs/toggle-fullscreen' will not use native fullscreen.
    ;; Use to disable fullscreen animations in OSX. (default nil)
    dotspacemacs-fullscreen-use-non-native nil
    ;; If non nil the frame is maximized when Emacs starts up.
    ;; Takes effect only if `dotspacemacs-fullscreen-at-startup' is nil.
    ;; (default nil) (Emacs 24.4+ only)
-   dotspacemacs-maximized-at-startup t
+   dotspacemacs-maximized-at-startup nil
    ;; A value from the range (0..100), in increasing opacity, which describes
    ;; the transparency level of a frame when it's active or selected.
    ;; Transparency can be toggled through `toggle-transparency'. (default 90)
@@ -284,17 +273,14 @@ values."
    ;; If non nil line numbers are turned on in all `prog-mode' and `text-mode'
    ;; derivatives. If set to `relative', also turns on relative line numbers.
    ;; (default nil)
-   dotspacemacs-line-numbers 'prog-mode
-   ;; Code folding method. Possible values are `evil' and `origami'.
-   ;; (default 'evil)
-   dotspacemacs-folding-method 'evil
+   dotspacemacs-line-numbers 'text-mode
    ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
    ;; (default nil)
    dotspacemacs-smartparens-strict-mode nil
    ;; If non-nil pressing the closing parenthesis `)' key in insert mode passes
    ;; over any automatically added closing parenthesis, bracket, quote, etc…
    ;; This can be temporary disabled by pressing `C-q' before `)'. (default nil)
-   dotspacemacs-smart-closing-parenthesis t
+   dotspacemacs-smart-closing-parenthesis nil
    ;; Select a scope to highlight delimiters. Possible values are `any',
    ;; `current', `all' or `nil'. Default is `all' (highlight any scope and
    ;; emphasis the current one). (default 'all)
@@ -334,120 +320,42 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+
   ;; General
   (setq truncate-lines t)
-  ;; for Windows
-  (setq process-coding-system-alist '(("[pP][lL][iI][nN][kK]" undecided-dos . undecided-dos)
-                                      ("[cC][mM][dD][pP][rR][oO][xX][yY]" cp932-dos . cp932-dos)))
-  (add-hook 'kill-emacs-hook '(lambda () (interactive)
-                                (recentf-cleanup)
-                                (recentf-save-list)))
+  (setq mac-command-modifier 'meta)
 
-  ;; General keybindings
-  (-each '(normal visual insert motion hybrid)
-    (lambda(state)
+  ;; Indent mode
+  (indent-guide-global-mode t)
+  (setq indent-guide-delay 1)
+  (setq indent-guide-recursive t)
+
+  ;; 見にくいので縦にウィンドウを分割するのを抑止
+  (setq split-width-threshold nil)
+  ;; General keybind
+  (evil-global-set-key 'hybrid (kbd "C-h") 'delete-backward-char)
+  (define-key company-active-map (kbd "C-h") 'delete-backward-char)
+  (evil-global-set-key 'hybrid (kbd "<C-tab>") 'yas-expand)
+  (define-key minibuffer-local-map (kbd "C-h") 'delete-backward-char)
+  (-each '(normal insert motion visual hybrid)
+    (lambda (state)
       (evil-global-set-key state (kbd "C-;") 'helm-for-files)
       ))
-  (evil-global-set-key 'hybrid (kbd "C-h") 'delete-backward-char)
-  (define-key minibuffer-local-map (kbd "C-h") 'delete-backward-char)
+  (spacemacs/set-leader-keys "s e" 'iedit-mode-toggle-on-function)
+  (spacemacs/set-leader-keys "s E" 'evil-iedit-state/iedit-mode)
+  (evil-global-set-key 'hybrid (kbd "M-y") 'helm-show-kill-ring)
 
-  ;; company
-  (define-key company-active-map (kbd "C-n") 'company-select-next)
-  (define-key company-active-map (kbd "C-p") 'company-select-previous)
+  ;; jsx
+  (add-to-list 'auto-mode-alist '("\\.jsx$" . js2-jsx-mode))
 
-  ;; org-mode
-  (setq org-bullets-bullet-list '("■" "◆" "▲" "≫" "▶" "▷"))
-  (spacemacs/set-leader-keys "C C" 'org-capture)
-  (spacemacs/set-leader-keys "o c" 'org-capture)
-
-  (require 'org-protocol)
-  (setq org-capture-templates `(
-                                ("c" "Task" entry (file+headline "~/Documents/org/tasks.org" "Inbox")
-                                 "* TODO %^{Title}\n")
-                                ("p" "Protocol" entry (file+headline "~/Documents/org/tasks.org" "Inbox")
-                                 "* TODO %?%a")
-                                ))
-  (setq org-refile-targets '((nil  :maxlevel . 6)))
-
-  (setq org-agenda-files '("~/Documents/org/tasks.org"))
-  (setq org-todo-keywords
-        '((sequence "*MSN(m)" "TODO(t)" "WAIT(w)" "DELEGATE(d)" "|" "DEFFER(d)" "CANCELED(c)" "DONE(x)")))
-  ;; for org-protocol outlook
-  (add-to-list 'org-link-types "outlook")
-  (setq org-link-types-re
-        "\\`\\(outlook\\|b\\(?:bdb\\|ibtex\\)\\|do\\(?:cview\\|i\\)\\|elisp\\|f\\(?:ile\\(?:\\+\\(?:\\(?:emac\\|sy\\)s\\)\\)?\\|tp\\)\\|gnus\\|h\\(?:elp\\|ttps?\\)\\|i\\(?:nfo\\|rc\\)\\|m\\(?:ailto\\|\\(?:essag\\|h\\)e\\)\\|news\\|orgit\\(?:-\\(?:log\\|rev\\)\\)?\\|\\(?:rmai\\|shel\\)l\\):")
-
-  (defvar my-org-clock-in-shell-buffer-name "*ORG-CLOCK-IN-BUFFER*")
-  (add-hook 'org-clock-in-hook '(lambda () (interactive)
-                                  (async-shell-command (concat "taskviewer"
-                                                               " \""
-                                                               (format-time-string "[%H:%M] " org-clock-start-time)
-                                                               (encode-coding-string org-clock-heading 'cp932)
-                                                               "\" "
-                                                               (number-to-string (- (display-pixel-height) 160))
-                                                               " "
-                                                               (number-to-string (- (display-pixel-width)  420)))
-                                                       (get-buffer-create my-org-clock-in-shell-buffer-name))
-                                  (delete-other-windows)))
-  (add-hook 'org-clock-out-hook '(lambda () (interactive)
-                                   (shell-command "taskkill /im:taskviewer.exe")
-                                   (let ((clock-process-buffer (get-buffer my-org-clock-in-shell-buffer-name)))
-                                     (with-timeout (10 (kill-buffer clock-process-buffer))
-                                       (while (process-live-p
-                                               (get-buffer-process clock-process-buffer))
-                                         (sleep-for 1)))
-                                     (kill-buffer clock-process-buffer))))
-
-  ;; inf-ruby
-  (setq inf-ruby-default-implementation "irb")
-
-  ;; calfw
-  (require 'calfw-ical)
-  (require 'calfw-org)
-  (defun my-open-calendar ()
-    (interactive)
-    (cfw:open-calendar-buffer
-     :contents-sources
-     (list
-      (cfw:org-create-source "IndianRed")  ; orgmode source
-      (cfw:ical-create-source "Private" (getenv "EMACS_CALFW_PRIVATE_CAL_URL") "sea green") ; google calendar ICS
-      (cfw:ical-create-source "Work" (getenv "EMACS_CALFW_WORK_CAL_URL") "LightBlue") ; google calendar ICS
-      )))
-  ;; holidays
-  (eval-after-load "holidays"
-    '(progn
-       (require 'japanese-holidays)
-       (setq calendar-holidays ; 他の国の祝日も表示させたい場合は適当に調整
-             (append japanese-holidays holiday-local-holidays holiday-other-holidays))
-       (setq mark-holidays-in-calendar t) ; 祝日をカレンダーに表示
-       ;; 土曜日・日曜日を祝日として表示する場合、以下の設定を追加します。
-       ;; デフォルトで設定済み
-       (setq japanese-holiday-weekend '(0 6)     ; 土日を祝日として表示
-             japanese-holiday-weekend-marker     ; 土曜日を水色で表示
-             '(holiday nil nil nil nil nil japanese-holiday-saturday))
-       (add-hook 'calendar-today-visible-hook 'japanese-holiday-mark-weekend)
-       (add-hook 'calendar-today-invisible-hook 'japanese-holiday-mark-weekend)))
-   (setq cfw:org-agenda-schedule-args '(:deadline))
-
-
-   ;; ruby
-  ;; enh-ruby-mode
-  (setq ruby-enable-enh-ruby-mode t)
-
-  ;; ddskk
-  (setq skk-large-jisyo "~/skk/SKK-JISYO.L")
-  (setq skk-jisyo "~/.skk-jisyo")
+  ;; skk
   (skk-preload)
-  (global-set-key (kbd "C-x C-j") (lambda ()(interactive) (skk-mode t)))
-  (define-key minibuffer-local-map (kbd "C-x C-j") (lambda ()(interactive) (skk-mode t)))
-  (define-key evil-ex-search-keymap (kbd "C-x C-j") (lambda ()(interactive) (skk-mode t)))
-  (evil-global-set-key 'hybrid (kbd "C-x C-j") (lambda ()(interactive) (skk-mode t)))
-  (add-hook 'evil-normal-state-entry-hook
-            '(lambda ()
-               (skk-mode -1)))
-  (add-hook 'rinari-minor-mode-hook
-            (lambda () (setq zeal-at-point-docset "rails")))
-
+  ;;  dict
+  (setq skk-large-jisyo "~/.skk/SKK-JISYO.L")
+  (setq skk-extra-jisyo-file-list '("~/.skk/SKK-JISYO.geo"
+                                    "~/.skk/SKK-JISYO.jinmei"
+                                    "~/.skk/SKK-JISYO.propernoun"
+                                    "~/.skk/SKK-JISYO.station"))
   (defun my-skk-c-j ()
     (interactive)
     (if skk-henkan-mode
@@ -456,7 +364,76 @@ you should place your code here."
   ;; C-j でひらがなモードに戻る。ただし変換中は確定にする
   (evil-global-set-key 'hybrid (kbd "C-j") 'my-skk-c-j)
 
+  ;; yas
+  (evil-global-set-key 'hybrid (kbd "M-i") 'yas-expand)
+  ;; yasnippet
+  (setq yas-new-snippet-default "\
+# -*- mode: snippet -*-
+# name: $1
+# ^ 一行説明
+# key: ${2:${1:$(yas--key-from-desc yas-text)}}
+# ^ expand が反応する文字列
+# binding: ${3:C-c m}
+# expand-env: ${4:((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))}
+# ^ ワンタイムでセットされる変数
+# group: ${5:group-name}
+# ^ メニュ- 等で使用される文字列
+# condition: ${6:t}
+# ^ non-nil の場合にときに実行される
+# --
+$0")
+
+  ;;  key
+  (setq skk-sticky-key ";")
+  (define-key minibuffer-local-map (kbd "C-x C-j") '(lambda () (interactive) (skk-mode t)))
+  (evil-global-set-key 'hybrid (kbd "C-j") '(lambda () (interactive)
+                                                  (if skk-henkan-mode
+                                                      (skk-kakutei)
+                                                    (skk-mode t))))
+  (evil-global-set-key 'hybrid (kbd "C-x C-j") '(lambda () (interactive) (skk-mode t)))
+  ;; C-j でひらがなモードに戻る。ただし変換中は確定にする
+  (evil-global-set-key 'hybrid (kbd "C-j") (lambda () (interactive)
+                                             (if skk-henkan-mode
+                                                 (skk-kakutei)
+                                               (skk-mode 1))))
+  (add-hook 'evil-normal-state-entry-hook '(lambda () (interactive) (skk-mode -1)))
+
+  ;; company-mode keybind
+  (define-key company-active-map (kbd "C-n") 'company-select-next)
+  (define-key company-active-map (kbd "C-p") 'company-select-previous)
+  (define-key company-active-map (kbd "C-s") 'company-filter-candidates)
+
+  ;; edbi
+  (setenv "PERL5LIB" "/Users/ichiro/perl5/lib/perl5")
+  (setq edbi:ds-history-file "~/.emacs.d/.cache/.edbi-ds-hitory")
+
+  ;; mc/mark
+  (setq mc/list-file "~/.emacs.d/.cache/.mc-lists.el")
+
+  ;; rake.el
+  (setq rake-cache-file "~/.emacs.d/.cache/rake.cache")
+
+  ;; geeknote
+  ;; (evil-global-set-key 'normal (kbd "SPC a e t") 'geeknote-tag-list)
+  ;; (evil-global-set-key 'normal (kbd "SPC a e T") 'geeknote-find-tags)
+  ;; (evil-global-set-key 'normal (kbd "SPC a e n") 'geeknote-notebook-list)
+  ;; (evil-global-set-key 'normal (kbd "SPC a e N") 'geeknote-find-in-notebook)
+  (spacemacs/set-leader-keys "a e t" 'geeknote-tag-list)
+  (spacemacs/set-leader-keys "a e T" 'geeknote-find-tags)
+  (spacemacs/set-leader-keys "a e n" 'geeknote-notebook-list)
+  (spacemacs/set-leader-keys "a e N" 'geeknote-find-in-notebook)
+
+  ;; org-mode
+  (setq org-bullets-bullet-list '("■" "◆" "▲" "≫" "▶" "▷"))
+  (spacemacs/set-leader-keys "o c" 'org-capture)
+
+  (setq org-refile-targets '((nil  :maxlevel . 6)))
+
+
   ;; helm
+  ;;  key
+  (spacemacs/set-leader-keys "h o" 'helm-occur)
+    ;; helm
   (eval-after-load "helm"
     '(progn
      ;; helm-map
@@ -477,47 +454,17 @@ you should place your code here."
        (define-key helm-map (kbd "C-j") 'my-skk-c-j)
        ))
 
-  ;; yas
-  (evil-global-set-key 'hybrid (kbd "M-i") 'yas-expand)
-
-  ;; Oracle
-  (setenv "NLS_LANG" "JAPANESE_JAPAN.JA16SJISTILDE")
-  (autoload 'sqlplus "sqlplus" nil t)
-  (defadvice sql-oracle (after set-coding-sql-oracle activate)
-    (set-process-coding-system (get-process "SQL") 'cp932 'cp932)
-    )
-  (setenv "NLS_LANG" "AMERICAN_JAPAN.UTF8")
-  ;; 2回目にedbiを実行するとブランクになる問題を回避
-  (defadvice edbi:dbview-quit-command (after my-edbi:dbview-clear-semaphore activate)
-    (edbi:dbview-query-execute-semaphore-clear)
-    (message "Clear edbi:dbview semaphore")
-    )
-  (setq edbi:query-result-fix-header nil)
-
-  ;; 一時ファイルを .cache へ移動
-  (setq edbi:ds-history-file "~/.emacs.d/.cache/.edbi-ds-history")
-  (setq mc/list-file "~/.emacs.d/.cache/.mc-lists.el")
-  (setq recentf-save-file "~/.emacs.d/.cache/recentf")
-  (setq image-dired-dir "~/.emacs.d/.cache/image-dired")
-
-  ;; Local file
-  (add-to-list 'file-coding-system-alist '("[T]F0004KE\\'" cp932-dos))
-
-  ;; jsx
-  (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js2-jsx-mode))
-
-  ;; visual-basic
-  (add-to-list 'auto-mode-alist '("\\.vbs?" . visual-basic-mode))
-
-  ;; aqua log
-  (autoload 'aqua-all-log-mode "aqua-all-log-mode" "\
-View mode for aquaAll.log
-\(fn)" t nil)
-
-  ;; doc-view-mode
-  (defvar doc-view-ghostscript-program "c:/Program Files/gs/gs9.20/bin/gswin64.exe")
-  (defvar doc-view-odf->pdf-converter-program "c:/Program Files/LibreOffice 5/program/soffice.exe")
-
+  ;; markdown
+  (setq markdown-command "markdown2")
+  (setq markdown-xhtml-header-content
+        "<link href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\"
+               rel=\"stylesheet\" integrity=\"sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u\"
+               crossorigin=\"anonymous\">
+         <script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js\"
+                 integrity=\"sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa\"
+                 crossorigin=\"anonymous\"></script>
+         <style type=\"text/css\"> body{ padding: 2em} </style>"
+        )
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -527,25 +474,12 @@ View mode for aquaAll.log
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ansi-color-faces-vector
-   [default default default italic underline success warning error])
- '(evil-want-Y-yank-to-eol nil)
- '(magit-git-executable "c:/Program Files/Git/bin/git.exe")
- '(org-enforce-todo-checkbox-dependencies t)
- '(org-enforce-todo-dependencies t)
- '(org-hierarchical-todo-statistics nil)
- '(org-provide-todo-statistics (quote all-headlines))
- '(org-reveal-history t)
- '(org-reveal-root "https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.3.0/")
- '(org-reveal-single-file nil)
- '(org-reveal-theme "white")
- '(org-startup-indented t)
- '(package-selected-packages
-   (quote
-    (ox-reveal pcache hydra projectile iedit anzu smartparens evil undo-tree helm helm-core avy async f s helm-dash powershell zonokai-theme zenburn-theme zen-and-art-theme underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme tao-theme tangotango-theme tango-plus-theme tango-2-theme sunny-day-theme sublime-themes subatomic256-theme subatomic-theme stekene-theme spacegray-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme seti-theme reverse-theme railscasts-theme purple-haze-theme professional-theme planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme pastels-on-dark-theme organic-green-theme omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme niflheim-theme naquadah-theme mustang-theme monokai-theme monochrome-theme molokai-theme moe-theme minimal-theme material-theme majapahit-theme lush-theme light-soap-theme jbeans-theme jazz-theme ir-black-theme inkpot-theme heroku-theme hemisu-theme hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme gandalf-theme flatui-theme flatland-theme firebelly-theme farmhouse-theme espresso-theme dracula-theme django-theme darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme cyberpunk-theme colorsarenice-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes afternoon-theme enh-ruby-mode edbi epc ctable concurrent ddskk cdb calfw zeal-at-point yaml-mode typing japanese-holidays imenu-list deferred ccc csv-nav google-maps orgit magit-gitflow evil-magit magit magit-popup web-mode web-beautify visual-basic-mode tagedit swift-mode sql-indent smeargle slim-mode scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv pug-mode projectile-rails rake inflections org-projectile org-present org org-pomodoro alert log4e gntp org-download mmm-mode markdown-toc livid-mode skewer-mode simple-httpd less-css-mode json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc htmlize helm-gitignore helm-css-scss helm-company helm-c-yasnippet haml-mode gnuplot gmail-message-mode ham-mode markdown-mode html-to-markdown gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md feature-mode git-commit with-editor dash emmet-mode edit-server csv-mode company-web web-completion-data company-tern dash-functional tern company-statistics company coffee-mode chruby bundler inf-ruby auto-yasnippet yasnippet ac-ispell auto-complete ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spacemacs-theme spaceline restart-emacs request rainbow-delimiters quelpa popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide ido-vertical-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
+ '(indent-guide-delay 0.1)
+ '(indent-guide-recursive t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
+ '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
