@@ -363,6 +363,7 @@ you should place your code here."
   (setq org-bullets-bullet-list '("■" "◆" "▲" "≫" "▶" "▷"))
   (spacemacs/set-leader-keys "C C" 'org-capture)
   (spacemacs/set-leader-keys "o c" 'org-capture)
+  (spacemacs/set-leader-keys "f a" '(lambda () (interactive) (find-file (-first-item org-agenda-files))))
 
   (require 'org-protocol)
   (setq org-capture-templates `(
