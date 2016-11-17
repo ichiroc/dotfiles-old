@@ -338,6 +338,7 @@ explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
   ;; General
   (setq truncate-lines t)
+  (setq find-program "c:/tools/msys64/usr/bin/find.exe")
 
   ;; for Windows
   (setq process-coding-system-alist '(("[pP][lL][iI][nN][kK]" undecided-dos . undecided-dos)
