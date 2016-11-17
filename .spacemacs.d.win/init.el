@@ -338,6 +338,7 @@ explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
   ;; General
   (setq truncate-lines t)
+
   ;; for Windows
   (setq process-coding-system-alist '(("[pP][lL][iI][nN][kK]" undecided-dos . undecided-dos)
                                       ("[cC][mM][dD][pP][rR][oO][xX][yY]" cp932-dos . cp932-dos)))
@@ -478,7 +479,8 @@ you should place your code here."
     '(progn
        (define-key helm-map (kbd "C-j") 'my-skk-c-j)
        ))
-
+  ;; google-translate
+  (spacemacs/set-google-translate-languages "en" "ja")
   ;; yas
   (evil-global-set-key 'hybrid (kbd "M-i") 'yas-expand)
 
