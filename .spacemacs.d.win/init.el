@@ -530,6 +530,19 @@ View mode for aquaAll.log
   ;; spacemacs はデフォルトが utf-8 になっているので、 (set-default-process-coding-system) を再実行して
   ;; 自動判定 (undecided-dos . undecided-unix)  に変更
   (set-default-process-coding-system)
+
+  ;; howm
+  (require 'howm)
+  ;; keybind "w" is Wiki
+  (spacemacs/set-leader-keys "a w w" 'howm-create)
+  (spacemacs/set-leader-keys "a w m" 'howm-menu)
+  (spacemacs/set-leader-keys "a w g" 'howm-list-grep)
+  (spacemacs/set-leader-keys "a w a" 'howm-list-all)
+  (spacemacs/set-leader-keys "a w l" 'howm-list-recent)
+  (evil-make-overriding-map howm-mode-map 'normal)
+  (evil-make-overriding-map howm-view-summary-mode-map 'normal)
+  (evil-make-overriding-map howm-menu-mode-map 'normal)
+  (add-to-list 'auto-mode-alist (cons (concat (expand-file-name howm-directory ) ".*") 'markdown-mode))
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
