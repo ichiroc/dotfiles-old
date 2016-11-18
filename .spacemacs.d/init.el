@@ -64,6 +64,7 @@ values."
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(
+                                      howm
                                       edbi
                                       ddskk
                                       enh-ruby-mode
@@ -469,6 +470,19 @@ $0")
 
   ;; projectile
   (projectile-rails-global-mode)
+
+  ;; howm
+  (require 'howm)
+  ;; keybind "w" is Wiki
+  (spacemacs/set-leader-keys "a w w" 'howm-create)
+  (spacemacs/set-leader-keys "a w m" 'howm-menu)
+  (spacemacs/set-leader-keys "a w g" 'howm-list-grep)
+  (spacemacs/set-leader-keys "a w a" 'howm-list-all)
+  (spacemacs/set-leader-keys "a w l" 'howm-list-recent)
+  (evil-make-overriding-map howm-mode-map 'normal)
+  (evil-make-overriding-map howm-view-summary-mode-map 'normal)
+  (evil-make-overriding-map howm-menu-mode-map 'normal)
+  (add-to-list 'auto-mode-alist (cons (concat (expand-file-name howm-directory ) ".*") 'markdown-mode))
 
   )
 
