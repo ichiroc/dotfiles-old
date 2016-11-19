@@ -429,8 +429,9 @@ $0")
   ;; org-mode
   (setq org-bullets-bullet-list '("■" "◆" "▲" "≫" "▶" "▷"))
   (spacemacs/set-leader-keys "o c" 'org-capture)
-
   (setq org-refile-targets '((nil  :maxlevel . 6)))
+  (setq org-agenda-files '("~/Documents/org/tasks.org"))
+  (spacemacs/set-leader-keys "f a" (defun my-org-find-task-file () (interactive) (find-file (-first-item org-agenda-files))))
 
   ;; helm
   ;;  key
