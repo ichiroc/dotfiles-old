@@ -467,6 +467,8 @@ $0")
                  crossorigin=\"anonymous\"></script>
          <style type=\"text/css\"> body{ padding: 2em} </style>"
         )
+  ;; markdown で バッククォートブロックを入力しやすくする
+  (sp-local-pair 'markdown-mode "```" "\n```")
 
   ;; projectile
   (projectile-rails-global-mode)
@@ -485,10 +487,6 @@ $0")
   (evil-make-overriding-map howm-menu-mode-map 'normal)
   (evil-make-overriding-map howm-view-contents-mode-map 'normal)
   (add-to-list 'auto-mode-alist (cons (concat (expand-file-name howm-directory ) ".*") 'markdown-mode))
-
-  ;; smartparens
-  ;; markdown でブロックウォートを入力しやすく
-  (sp-local-pair 'markdown-mode "```" "\n```")
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
