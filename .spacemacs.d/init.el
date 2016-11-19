@@ -479,11 +479,16 @@ $0")
   (spacemacs/set-leader-keys "a w g" 'howm-list-grep)
   (spacemacs/set-leader-keys "a w a" 'howm-list-all)
   (spacemacs/set-leader-keys "a w l" 'howm-list-recent)
+  (spacemacs/set-leader-keys "a w q" 'howm-kill-all)
   (evil-make-overriding-map howm-mode-map 'normal)
   (evil-make-overriding-map howm-view-summary-mode-map 'normal)
   (evil-make-overriding-map howm-menu-mode-map 'normal)
+  (evil-make-overriding-map howm-view-contents-mode-map 'normal)
   (add-to-list 'auto-mode-alist (cons (concat (expand-file-name howm-directory ) ".*") 'markdown-mode))
 
+  ;; smartparens
+  ;; markdown でブロックウォートを入力しやすく
+  (sp-local-pair 'markdown-mode "```" "\n```")
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
