@@ -472,6 +472,7 @@ $0")
 
   ;; projectile
   (projectile-rails-global-mode)
+  (evil-define-key 'normal projectile-rails-mode-map (kbd "C-<return>") 'projectile-rails-goto-file-at-point)
 
   ;; howm
   (require 'howm)
