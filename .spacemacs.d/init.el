@@ -432,6 +432,8 @@ $0")
   (setq org-refile-targets '((nil  :maxlevel . 6)))
   (setq org-agenda-files '("~/Documents/org/tasks.org"))
   (spacemacs/set-leader-keys "f a" (defun my-org-find-task-file () (interactive) (find-file (-first-item org-agenda-files))))
+  (setq org-global-properties '(("Effort_ALL" . "00:05 00:15 00:30 01:00")))
+  (setq org-columns-default-format "%25ITEM %TODO %3PRIORITY %EFFORT(Effort){:} %CLOCKSUM %TAGS")
 
   ;; helm
   ;;  key
