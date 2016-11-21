@@ -371,7 +371,7 @@ you should place your code here."
 
   (setq org-agenda-files '("~/Documents/org/tasks.org"))
   (setq org-todo-keywords
-        '((sequence "*MSN(m)" "TODO(t)" "WAIT(w)" "DELEGATE(d)" "|" "DEFFER(d)" "CANCELED(c)" "DONE(x)")))
+        '((sequence "TODO(t)" "WAIT(w)" "|" "DEFFER(d)" "CANCELED(c)" "DONE(x)")))
   ;; for org-protocol outlook
   (add-to-list 'org-link-types "outlook")
   (setq org-link-types-re
