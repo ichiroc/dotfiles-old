@@ -60,12 +60,6 @@ values."
      chrome
      csv
      evernote
-     ;; git
-     ;; markdown
-     ;; org
-     ;; (shell :variables
-     ;;        shell-default-height 30
-     ;;        shell-default-position 'bottom)
      ;; spell-checking
      ;; syntax-checking
      ;; version-control
@@ -403,6 +397,9 @@ you should place your code here."
                                                (get-buffer-process clock-process-buffer))
                                          (sleep-for 1)))
                                      (kill-buffer clock-process-buffer))))
+  ;; org-pomodoro notification
+  (add-hook 'org-pomodoro-finished-hook '(lambda () (interactive)(shell-command "msg console Take a break :)")))
+  (add-hook 'org-pomodoro-break-finished-hook '(lambda () (interactive) (shell-command "msg console It's time to work!")))
 
   ;; inf-ruby
   (setq inf-ruby-default-implementation "irb")
@@ -556,6 +553,8 @@ View mode for aquaAll.log
    [default default default italic underline success warning error])
  '(evil-want-Y-yank-to-eol nil)
  '(magit-git-executable "c:/Program Files/Git/bin/git.exe")
+ '(org-columns-default-format
+   "%8 %3PRIORITY %67ITEM %15DEADLINE %CLOCKSUM %13TAGS %Effort{:}")
  '(org-enforce-todo-checkbox-dependencies t)
  '(org-enforce-todo-dependencies t)
  '(org-hierarchical-todo-statistics nil)
