@@ -528,6 +528,9 @@ View mode for aquaAll.log
   ;; 自動判定 (undecided-dos . undecided-unix)  に変更
   (set-default-process-coding-system)
 
+  ;; markdown
+  (setq markdown-command "pandoc")
+
   ;; howm
   (require 'howm)
   ;; keybind "w" is Wiki
