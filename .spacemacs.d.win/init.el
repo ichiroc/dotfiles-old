@@ -538,6 +538,8 @@ View mode for aquaAll.log
 
   ;; markdown
   (setq markdown-command "pandoc")
+  (sp-local-pair 'markdown-mode "```" "\n```")
+  (add-to-list 'auto-mode-alist '("\\.md\\.txt" . markdown-mode))
 
   ;; howm
   (require 'howm)
