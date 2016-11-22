@@ -570,6 +570,7 @@ View mode for aquaAll.log
  '(evil-want-Y-yank-to-eol nil)
  '(magit-git-executable "c:/Program Files/Git/bin/git.exe")
  '(org-agenda-dim-blocked-tasks nil)
+ '(org-agenda-skip-deadline-prewarning-if-scheduled (quote pre-scheduled))
  '(org-columns-default-format
    "%8 %3PRIORITY %67ITEM %15DEADLINE %CLOCKSUM %13TAGS %Effort{:}")
  '(org-enforce-todo-checkbox-dependencies t)
