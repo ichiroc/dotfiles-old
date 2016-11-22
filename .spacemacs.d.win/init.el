@@ -360,6 +360,9 @@ you should place your code here."
   (spacemacs/set-leader-keys "o c" 'org-capture)
   (spacemacs/set-leader-keys "f a" '(lambda () (interactive) (find-file (-first-item org-agenda-files))))
 
+  ;; outlook もリンクできるようにする
+  (load-file "~/.spacemacs.d/org-open-at-point-monkey-patch.el")
+
   ;; org priority
   (setq org-highest-priority ?1)
   (setq org-default-priority ?5)
