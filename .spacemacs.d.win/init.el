@@ -360,9 +360,6 @@ you should place your code here."
   (spacemacs/set-leader-keys "o c" 'org-capture)
   (spacemacs/set-leader-keys "f a" '(lambda () (interactive) (find-file (-first-item org-agenda-files))))
 
-  ;; outlook もリンクできるようにする
-  (load-file "~/.spacemacs.d/org-open-at-point-monkey-patch.el")
-
   ;; org priority
   (setq org-highest-priority ?1)
   (setq org-default-priority ?5)
@@ -380,7 +377,10 @@ you should place your code here."
   (setq org-agenda-files '("~/Documents/org/tasks.org"))
   (setq org-todo-keywords
         '((sequence "TODO(t)" "WAIT(w)" "|" "DEFFER(d)" "CANCELED(c)" "DONE(x)")))
+
   ;; for org-protocol outlook
+  ;; outlook もリンクできるようにする
+  (load-file "~/.spacemacs.d/org-open-at-point-monkey-patch.el")
   (add-to-list 'org-link-types "outlook")
   (setq org-link-types-re
         "\\`\\(outlook\\|b\\(?:bdb\\|ibtex\\)\\|do\\(?:cview\\|i\\)\\|elisp\\|f\\(?:ile\\(?:\\+\\(?:\\(?:emac\\|sy\\)s\\)\\)?\\|tp\\)\\|gnus\\|h\\(?:elp\\|ttps?\\)\\|i\\(?:nfo\\|rc\\)\\|m\\(?:ailto\\|\\(?:essag\\|h\\)e\\)\\|news\\|orgit\\(?:-\\(?:log\\|rev\\)\\)?\\|\\(?:rmai\\|shel\\)l\\):")
