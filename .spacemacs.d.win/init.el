@@ -360,6 +360,11 @@ you should place your code here."
   (spacemacs/set-leader-keys "o c" 'org-capture)
   (spacemacs/set-leader-keys "f a" '(lambda () (interactive) (find-file (-first-item org-agenda-files))))
 
+  ;; org priority
+  (setq org-highest-priority ?1)
+  (setq org-default-priority ?5)
+  (setq org-lowest-priority ?9)
+
   (require 'org-protocol)
   (setq org-capture-templates `(
                                 ("c" "Task" entry (file+headline "~/Documents/org/tasks.org" "Inbox")
