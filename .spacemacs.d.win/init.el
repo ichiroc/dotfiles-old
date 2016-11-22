@@ -60,12 +60,6 @@ values."
      chrome
      csv
      evernote
-     ;; git
-     ;; markdown
-     ;; org
-     ;; (shell :variables
-     ;;        shell-default-height 30
-     ;;        shell-default-position 'bottom)
      ;; spell-checking
      ;; syntax-checking
      ;; version-control
@@ -366,6 +360,14 @@ you should place your code here."
   (spacemacs/set-leader-keys "o c" 'org-capture)
   (spacemacs/set-leader-keys "f a" '(lambda () (interactive) (find-file (-first-item org-agenda-files))))
 
+  ;; outlook もリンクできるようにする
+  (load-file "~/.spacemacs.d/org-open-at-point-monkey-patch.el")
+
+  ;; org priority
+  (setq org-highest-priority ?1)
+  (setq org-default-priority ?5)
+  (setq org-lowest-priority ?9)
+
   (require 'org-protocol)
   (setq org-capture-templates `(
                                 ("c" "Task" entry (file+headline "~/Documents/org/tasks.org" "Inbox")
@@ -377,12 +379,15 @@ you should place your code here."
 
   (setq org-agenda-files '("~/Documents/org/tasks.org"))
   (setq org-todo-keywords
-        '((sequence "*MSN(m)" "TODO(t)" "WAIT(w)" "DELEGATE(d)" "|" "DEFFER(d)" "CANCELED(c)" "DONE(x)")))
+        '((sequence "TODO(t)" "WAIT(w)" "|" "DEFFER(d)" "CANCELED(c)" "DONE(x)")))
   ;; for org-protocol outlook
   (add-to-list 'org-link-types "outlook")
   (setq org-link-types-re
         "\\`\\(outlook\\|b\\(?:bdb\\|ibtex\\)\\|do\\(?:cview\\|i\\)\\|elisp\\|f\\(?:ile\\(?:\\+\\(?:\\(?:emac\\|sy\\)s\\)\\)?\\|tp\\)\\|gnus\\|h\\(?:elp\\|ttps?\\)\\|i\\(?:nfo\\|rc\\)\\|m\\(?:ailto\\|\\(?:essag\\|h\\)e\\)\\|news\\|orgit\\(?:-\\(?:log\\|rev\\)\\)?\\|\\(?:rmai\\|shel\\)l\\):")
 
+  ;; org clock
+  (global-set-key (kbd "C-c C-x C-j") 'org-clock-goto)
+  (spacemacs/set-leader-keys "a o j" 'org-clock-goto)
   (defvar my-org-clock-in-shell-buffer-name "*ORG-CLOCK-IN-BUFFER*")
   (add-hook 'org-clock-in-hook '(lambda () (interactive)
                                   (async-shell-command (concat "taskviewer"
@@ -403,6 +408,9 @@ you should place your code here."
                                                (get-buffer-process clock-process-buffer))
                                          (sleep-for 1)))
                                      (kill-buffer clock-process-buffer))))
+  ;; org-pomodoro notification
+  (add-hook 'org-pomodoro-finished-hook '(lambda () (interactive)(shell-command "msg console Take a break :)")))
+  (add-hook 'org-pomodoro-break-finished-hook '(lambda () (interactive) (shell-command "msg console It's time to work!")))
 
   ;; inf-ruby
   (setq inf-ruby-default-implementation "irb")
@@ -531,6 +539,11 @@ View mode for aquaAll.log
   ;; 自動判定 (undecided-dos . undecided-unix)  に変更
   (set-default-process-coding-system)
 
+  ;; markdown
+  (setq markdown-command "pandoc")
+  (sp-local-pair 'markdown-mode "```" "\n```")
+  (add-to-list 'auto-mode-alist '("\\.md\\.txt" . markdown-mode))
+
   ;; howm
   (require 'howm)
   ;; keybind "w" is Wiki
@@ -556,6 +569,9 @@ View mode for aquaAll.log
    [default default default italic underline success warning error])
  '(evil-want-Y-yank-to-eol nil)
  '(magit-git-executable "c:/Program Files/Git/bin/git.exe")
+ '(org-agenda-dim-blocked-tasks nil)
+ '(org-columns-default-format
+   "%8 %3PRIORITY %67ITEM %15DEADLINE %CLOCKSUM %13TAGS %Effort{:}")
  '(org-enforce-todo-checkbox-dependencies t)
  '(org-enforce-todo-dependencies t)
  '(org-hierarchical-todo-statistics nil)
