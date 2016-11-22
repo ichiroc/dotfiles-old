@@ -382,6 +382,9 @@ you should place your code here."
   (setq org-link-types-re
         "\\`\\(outlook\\|b\\(?:bdb\\|ibtex\\)\\|do\\(?:cview\\|i\\)\\|elisp\\|f\\(?:ile\\(?:\\+\\(?:\\(?:emac\\|sy\\)s\\)\\)?\\|tp\\)\\|gnus\\|h\\(?:elp\\|ttps?\\)\\|i\\(?:nfo\\|rc\\)\\|m\\(?:ailto\\|\\(?:essag\\|h\\)e\\)\\|news\\|orgit\\(?:-\\(?:log\\|rev\\)\\)?\\|\\(?:rmai\\|shel\\)l\\):")
 
+  ;; org clock
+  (global-set-key (kbd "C-c C-x C-j") 'org-clock-goto)
+  (spacemacs/set-leader-keys "a o j" 'org-clock-goto)
   (defvar my-org-clock-in-shell-buffer-name "*ORG-CLOCK-IN-BUFFER*")
   (add-hook 'org-clock-in-hook '(lambda () (interactive)
                                   (async-shell-command (concat "taskviewer"
