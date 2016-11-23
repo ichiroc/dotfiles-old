@@ -349,6 +349,8 @@ you should place your code here."
       ))
   (evil-global-set-key 'hybrid (kbd "C-h") 'delete-backward-char)
   (define-key minibuffer-local-map (kbd "C-h") 'delete-backward-char)
+  ;; evil 置換する際に c-b で戻れないと不便
+  (define-key evil-ex-completion-map (kbd "C-b") 'backward-char)
 
   ;; company
   (define-key company-active-map (kbd "C-n") 'company-select-next)
