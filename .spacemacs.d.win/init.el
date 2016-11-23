@@ -408,6 +408,9 @@ you should place your code here."
                                                (get-buffer-process clock-process-buffer))
                                          (sleep-for 1)))
                                      (kill-buffer clock-process-buffer))))
+  ;; org-clock modeline
+  (spacemacs/toggle-mode-line-org-clock-on)
+
   ;; org-pomodoro notification
   (add-hook 'org-pomodoro-finished-hook '(lambda () (interactive)(shell-command "msg console Take a break :)")))
   (add-hook 'org-pomodoro-break-finished-hook '(lambda () (interactive) (shell-command "msg console It's time to work!")))
