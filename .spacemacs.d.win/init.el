@@ -415,6 +415,27 @@ you should place your code here."
   ;; org-clock modeline
   (spacemacs/toggle-mode-line-org-clock-on)
 
+  ;; clock in しているタスクの property をインクリメントする
+  (defun my-org-clock-increment-property (prop-name)
+    (interactive)
+    (save-excursion
+      (org-clock-goto)
+      (my-org-increment-property-value prop-name)
+      ))
+
+  ;; org の property の数字をインクリメントする
+  (defun my-org-increment-property-value (prop-name)
+    (let*  ((prop-value (car (org-property--local-values prop-name t))))
+      (when (eq prop-value nil) (setq prop-value "0"))
+      (org-set-property prop-name (number-to-string (1+ (string-to-number prop-value))))
+      ))
+  ;; org-pomodoro のログ記録
+  (add-hook 'org-pomodoro-started-hook '(lambda () (interactive) (my-org-clock-increment-property "Pomodoro_Started")))
+  (add-hook 'org-pomodoro-finished-hook '(lambda () (interactive) (my-org-clock-increment-property "Pomodoro_Finished")))
+  (add-hook 'org-pomodoro-killed-hook '(lambda () (interactive)
+                                         (org-clock-out)
+                                         (my-org-clock-increment-property "Pomodoro_Killed")))
+
   ;; org-pomodoro notification
   (add-hook 'org-pomodoro-finished-hook '(lambda () (interactive)(shell-command "msg console Take a break :)")))
   (add-hook 'org-pomodoro-break-finished-hook '(lambda () (interactive) (shell-command "msg console It's time to work!")))
