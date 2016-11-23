@@ -437,6 +437,11 @@ you should place your code here."
   (add-hook 'org-pomodoro-killed-hook '(lambda () (interactive)
                                          (org-clock-out)
                                          (my-org-clock-increment-property "Pomodoro_Killed")))
+  ;; task を完了したら自動的に org-pomodoro を finish
+  (add-hook 'org-after-todo-state-change-hook '(lambda () (interactive)
+                                                 (when (-contains? org-done-keywords org-state)
+                                                   (org-pomodoro-finished)
+                                                   )))
 
   ;; org-pomodoro notification
   (add-hook 'org-pomodoro-finished-hook '(lambda () (interactive)(shell-command "msg console Take a break :)")))
