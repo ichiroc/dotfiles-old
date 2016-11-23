@@ -576,6 +576,22 @@ View mode for aquaAll.log
    [default default default italic underline success warning error])
  '(evil-want-Y-yank-to-eol nil)
  '(magit-git-executable "c:/Program Files/Git/bin/git.exe")
+ '(org-agenda-custom-commands
+   (quote
+    (("a" "Agenda for a week from today and Todays task."
+      ((agenda ""
+               ((org-agenda-overriding-header "スケジュールされたタスク、デッドライン間近のタスク")
+                (org-agenda-start-on-weekday nil)
+                (org-agenda-sorting-strategy
+                 (quote
+                  (deadline-up scheduled-up)))))
+       (todo "TODO"
+             ((org-agenda-sorting-strategy
+               (quote
+                (priority-up)))
+              (org-agenda-overriding-header "本日やるタスク"))))
+      nil)
+     ("t" "List of all TODO entry ( only \"TODO\" )" todo "TODO" nil))))
  '(org-agenda-dim-blocked-tasks nil)
  '(org-agenda-skip-deadline-prewarning-if-scheduled (quote pre-scheduled))
  '(org-columns-default-format
