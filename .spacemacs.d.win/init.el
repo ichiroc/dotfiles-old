@@ -407,14 +407,19 @@ you should place your code here."
                                                                (number-to-string (- (display-pixel-width)  420)))
                                                        (get-buffer-create my-org-clock-in-shell-buffer-name))
                                   (delete-other-windows)))
-  (add-hook 'org-clock-out-hook '(lambda () (interactive)
-                                   (shell-command "taskkill /im:taskviewer.exe")
-                                   (let ((clock-process-buffer (get-buffer my-org-clock-in-shell-buffer-name)))
-                                     (with-timeout (10 (kill-buffer clock-process-buffer))
-                                       (while (process-live-p
-                                               (get-buffer-process clock-process-buffer))
-                                         (sleep-for 1)))
-                                     (kill-buffer clock-process-buffer))))
+  (defun my-org-clock-kill-taskviewer ()
+    (interactive)
+    (shell-command "taskkill /im:taskviewer.exe")
+    (let ((clock-process-buffer (get-buffer my-org-clock-in-shell-buffer-name)))
+      (with-timeout (10 (kill-buffer clock-process-buffer))
+        (while (process-live-p
+                (get-buffer-process clock-process-buffer))
+          (sleep-for 1)))
+      (kill-buffer clock-process-buffer))
+    )
+  (add-hook 'org-clock-out-hook 'my-org-clock-kill-taskviewer)
+  (add-hook 'org-clock-cancel-hook 'my-org-clock-kill-taskviewer)
+
   ;; org-clock modeline
   (spacemacs/toggle-mode-line-org-clock-on)
 
@@ -435,9 +440,8 @@ you should place your code here."
   ;; org-pomodoro のログ記録
   (add-hook 'org-pomodoro-started-hook '(lambda () (interactive) (my-org-clock-increment-property "Pomodoro_Started")))
   (add-hook 'org-pomodoro-finished-hook '(lambda () (interactive) (my-org-clock-increment-property "Pomodoro_Finished")))
-  (add-hook 'org-pomodoro-killed-hook '(lambda () (interactive)
-                                         (org-clock-out)
-                                         (my-org-clock-increment-property "Pomodoro_Killed")))
+  (add-hook 'org-pomodoro-killed-hook '(lambda () (interactive) (my-org-clock-increment-property "Pomodoro_Killed")))
+
   ;; task を完了したら自動的に org-pomodoro を finish
   (add-hook 'org-after-todo-state-change-hook '(lambda () (interactive)
                                                  (when (-contains? org-done-keywords org-state)
