@@ -64,6 +64,7 @@ values."
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(
+                                      howm
                                       edbi
                                       ddskk
                                       enh-ruby-mode
@@ -244,14 +245,14 @@ values."
    dotspacemacs-loading-progress-bar t
    ;; If non nil the frame is fullscreen when Emacs starts up. (default nil)
    ;; (Emacs 24.4+ only)
-   dotspacemacs-fullscreen-at-startup t
+   dotspacemacs-fullscreen-at-startup nil
    ;; If non nil `spacemacs/toggle-fullscreen' will not use native fullscreen.
    ;; Use to disable fullscreen animations in OSX. (default nil)
    dotspacemacs-fullscreen-use-non-native nil
    ;; If non nil the frame is maximized when Emacs starts up.
    ;; Takes effect only if `dotspacemacs-fullscreen-at-startup' is nil.
    ;; (default nil) (Emacs 24.4+ only)
-   dotspacemacs-maximized-at-startup nil
+   dotspacemacs-maximized-at-startup t
    ;; A value from the range (0..100), in increasing opacity, which describes
    ;; the transparency level of a frame when it's active or selected.
    ;; Transparency can be toggled through `toggle-transparency'. (default 90)
@@ -428,8 +429,12 @@ $0")
   ;; org-mode
   (setq org-bullets-bullet-list '("■" "◆" "▲" "≫" "▶" "▷"))
   (spacemacs/set-leader-keys "o c" 'org-capture)
-
   (setq org-refile-targets '((nil  :maxlevel . 6)))
+  (setq org-agenda-files '("~/Documents/org/tasks.org"))
+  (spacemacs/set-leader-keys "f a" (defun my-org-find-task-file () (interactive) (find-file (-first-item org-agenda-files))))
+  (spacemacs/toggle-mode-line-org-clock-on)
+  (setq org-global-properties '(("Effort_ALL" . "00:00 00:05 00:15 00:30 01:00")))
+  (setq org-columns-default-format "%25ITEM %TODO %3PRIORITY %EFFORT(Effort){:} %CLOCKSUM %TAGS")
 
   ;; helm
   ;;  key
@@ -466,10 +471,27 @@ $0")
                  crossorigin=\"anonymous\"></script>
          <style type=\"text/css\"> body{ padding: 2em} </style>"
         )
+  ;; markdown で バッククォートブロックを入力しやすくする
+  (sp-local-pair 'markdown-mode "```" "\n```")
 
   ;; projectile
   (projectile-rails-global-mode)
+  (evil-define-key 'normal projectile-rails-mode-map (kbd "C-<return>") 'projectile-rails-goto-file-at-point)
 
+  ;; howm
+  (require 'howm)
+  ;; keybind "w" is Wiki
+  (spacemacs/set-leader-keys "a w w" 'howm-create)
+  (spacemacs/set-leader-keys "a w m" 'howm-menu)
+  (spacemacs/set-leader-keys "a w g" 'howm-list-grep)
+  (spacemacs/set-leader-keys "a w a" 'howm-list-all)
+  (spacemacs/set-leader-keys "a w l" 'howm-list-recent)
+  (spacemacs/set-leader-keys "a w q" 'howm-kill-all)
+  (evil-make-overriding-map howm-mode-map 'normal)
+  (evil-make-overriding-map howm-view-summary-mode-map 'normal)
+  (evil-make-overriding-map howm-menu-mode-map 'normal)
+  (evil-make-overriding-map howm-view-contents-mode-map 'normal)
+  (add-to-list 'auto-mode-alist (cons (concat (expand-file-name howm-directory ) ".*") 'markdown-mode))
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -479,6 +501,54 @@ $0")
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(dash-at-point-mode-alist
+   (quote
+    ((actionscript-mode . "actionscript")
+     (arduino-mode . "arduino")
+     (c++-mode . "cpp,net,boost,qt,cvcpp,cocos2dx,c,manpages")
+     (c-mode . "c,glib,gl2,gl3,gl4,manpages")
+     (caml-mode . "ocaml")
+     (clojure-mode . "clojure")
+     (coffee-mode . "coffee")
+     (common-lisp-mode . "lisp")
+     (cperl-mode . "perl")
+     (css-mode . "css,bootstrap,foundation,less,awesome,cordova,phonegap")
+     (dart-mode . "dartlang,polymerdart,angulardart")
+     (elixir-mode . "elixir")
+     (emacs-lisp-mode . "elisp")
+     (enh-ruby-mode . "ruby,rails,rubygems")
+     (erlang-mode . "erlang")
+     (gfm-mode . "markdown")
+     (go-mode . "go,godoc")
+     (groovy-mode . "groovy")
+     (haml-mode . "ruby,rubygems,rails,haml")
+     (haskell-mode . "haskell")
+     (html-mode . "html,svg,css,bootstrap,foundation,awesome,javascript,jquery,jqueryui,jquerym,angularjs,backbone,marionette,meteor,moo,prototype,ember,lodash,underscore,sencha,extjs,knockout,zepto,cordova,phonegap,yui")
+     (jade-mode . "jade")
+     (java-mode . "java,javafx,grails,groovy,playjava,spring,cvj,processing,javadoc")
+     (js2-mode . "javascript,backbone,angularjs")
+     (js3-mode . "nodejs")
+     (latex-mode . "latex")
+     (less-css-mode . "less")
+     (lua-mode . "lua,corona")
+     (markdown-mode . "markdown")
+     (nginx-mode . "nginx")
+     (objc-mode . "cpp,iphoneos,macosx,appledoc,cocoapods,cocos2dx,cocos2d,cocos3d,kobold2d,sparrow,c,manpages")
+     (perl-mode . "perl,manpages")
+     (php-mode . "php,wordpress,drupal,zend,laravel,yii,joomla,ee,codeigniter,cakephp,phpunit,symfony,typo3,twig,smarty,phpp,html,mysql,sqlite,mongodb,psql,redis")
+     (processing-mode . "processing")
+     (puppet-mode . "puppet")
+     (python-mode . "python3,django,twisted,sphinx,flask,tornado,sqlalchemy,numpy,scipy,saltcvp")
+     (ruby-mode . "ruby,rubygems,rails")
+     (rust-mode . "rust")
+     (sass-mode . "sass,compass,bourbon,neat,css")
+     (scala-mode . "scala,akka,playscala,scaladoc")
+     (stylus-mode . "stylus")
+     (tcl-mode . "tcl")
+     (tuareg-mode . "ocaml")
+     (twig-mode . "twig")
+     (vim-mode . "vim")
+     (yaml-mode . "chef,ansible"))))
  '(indent-guide-delay 0.1)
  '(indent-guide-recursive t))
 (custom-set-faces
