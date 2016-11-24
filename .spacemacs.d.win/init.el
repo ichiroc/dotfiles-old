@@ -69,6 +69,7 @@ values."
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(
+                                      quickrun
                                       howm
                                       edbi
                                       (aqua-all-log-mode :location local)
