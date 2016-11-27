@@ -456,7 +456,14 @@ $0")
        (define-key helm-map (kbd "C-M-p") 'helm-previous-source)
        (define-key helm-map (kbd "C-h") 'delete-backward-char)
        (define-key helm-map (kbd "C-j") 'my-skk-c-j)
+       (define-key evil-ex-completion-map (kbd "C-h") 'delete-backward-char)
+       ;; evil 置換する際に emacs bind 使えないと不便
+       (define-key evil-ex-completion-map (kbd "C-b") 'backward-char)
+       (define-key evil-ex-completion-map (kbd "C-a") 'beginning-of-line)
      ))
+  (eval-after-load "helm-buffers"
+     '(progn
+        (define-key helm-buffer-map (kbd "C-h") 'helm-ff-delete-char-backward)
   (eval-after-load "helm-files"
     '(progn
        (define-key helm-map (kbd "C-j") 'my-skk-c-j)
