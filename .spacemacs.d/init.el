@@ -44,6 +44,7 @@ values."
      git
      markdown
      org
+     org-task
      ruby-on-rails
      (ruby :variables ruby-enable-enh-ruby-mode t)
      javascript
