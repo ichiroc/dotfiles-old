@@ -352,7 +352,7 @@ you should place your code here."
 
   ;; skk
   (skk-preload)
-  ;;  dict
+  ;; skk dict
   (setq skk-large-jisyo "~/.skk/SKK-JISYO.L")
   (setq skk-extra-jisyo-file-list '("~/.skk/SKK-JISYO.geo"
                                     "~/.skk/SKK-JISYO.jinmei"
