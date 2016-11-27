@@ -3,7 +3,6 @@
 ;; org-mode
 (setq org-bullets-bullet-list '("■" "◆" "▲" "≫" "▶" "▷"))
 
-
 ;; org priority
 (setq org-highest-priority ?1)
 (setq org-default-priority ?5)
@@ -18,7 +17,7 @@
                               ))
 (setq org-refile-targets '((nil  :maxlevel . 6)))
 
-(setq org-agenda-files '(my-org-default-task-file))
+(setq org-agenda-files (list my-org-default-task-file ))
 (setq org-todo-keywords
       '((sequence "TODO(t)" "WAIT(w)" "|" "DEFFER(d)" "CANCELED(c)" "DONE(x)")))
 
