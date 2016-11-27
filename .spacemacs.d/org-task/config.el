@@ -8,20 +8,18 @@
 (setq org-default-priority ?5)
 (setq org-lowest-priority ?9)
 
-(require 'org-protocol)
 (setq org-capture-templates `(
-                              ("c" "Task" entry (file+headline my-org-default-task-file "Inbox")
+                              ("c" "Task" entry (file+headline ,my-org-default-task-file "Inbox")
                                "* TODO %^{Title}\n")
-                              ("p" "Protocol" entry (file+headline my-org-default-task-file "Inbox")
+                              ("p" "Protocol" entry (file+headline ,my-org-default-task-file "Inbox")
                                "* TODO %?%a")
                               ))
+
 (setq org-refile-targets '((nil  :maxlevel . 6)))
 
 (setq org-agenda-files (list my-org-default-task-file ))
 (setq org-todo-keywords
       '((sequence "TODO(t)" "WAIT(w)" "|" "DEFFER(d)" "CANCELED(c)" "DONE(x)")))
-
-
 
 ;; org-clock modeline
 ;;(spacemacs/toggle-mode-line-org-clock-on)
@@ -44,6 +42,7 @@
 ;; Windows用設定
 (when (eq system-type 'windows-nt)
   ;; for org-protocol outlook
+  (require 'org-protocol)
   ;; outlook もリンクできるようにする
   (load-file "~/.spacemacs.d/org-open-at-point-monkey-patch.el")
   (add-to-list 'org-link-types "outlook")
