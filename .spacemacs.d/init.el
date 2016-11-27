@@ -427,15 +427,21 @@ $0")
   (spacemacs/set-leader-keys "a e n" 'geeknote-notebook-list)
   (spacemacs/set-leader-keys "a e N" 'geeknote-find-in-notebook)
 
-  ;; org-mode
-  (setq org-bullets-bullet-list '("■" "◆" "▲" "≫" "▶" "▷"))
-  (spacemacs/set-leader-keys "o c" 'org-capture)
-  (setq org-refile-targets '((nil  :maxlevel . 6)))
-  (setq org-agenda-files '("~/Documents/org/tasks.org"))
-  (spacemacs/set-leader-keys "f a" (defun my-org-find-task-file () (interactive) (find-file (-first-item org-agenda-files))))
-  (spacemacs/toggle-mode-line-org-clock-on)
-  (setq org-global-properties '(("Effort_ALL" . "00:00 00:05 00:15 00:30 01:00")))
-  (setq org-columns-default-format "%25ITEM %TODO %3PRIORITY %EFFORT(Effort){:} %CLOCKSUM %TAGS")
+  ;; ;; org-mode
+  ;; (setq org-bullets-bullet-list '("■" "◆" "▲" "≫" "▶" "▷"))
+  ;; (setq org-refile-targets '((nil  :maxlevel . 6)))
+  ;; (setq org-agenda-files '("~/Documents/org/tasks.org"))
+  ;; (spacemacs/set-leader-keys "f a" (defun my-org-find-task-file () (interactive) (find-file (-first-item org-agenda-files))))
+  ;; (spacemacs/toggle-mode-line-org-clock-on)
+  ;; (setq org-global-properties '(("Effort_ALL" . "00:00 00:05 00:15 00:30 01:00")))
+  ;; (setq org-columns-default-format "%25ITEM %TODO %3PRIORITY %EFFORT(Effort){:} %CLOCKSUM %TAGS")
+  ;; (spacemacs/set-leader-keys "o c" 'org-capture)
+  ;; (setq org-capture-templates `(
+  ;;                               ("c" "Task" entry (file+headline "~/Documents/org/tasks.org" "Inbox")
+  ;;                                "* TODO %^{Title}\n")
+  ;;                               ("p" "Protocol" entry (file+headline "~/Documents/org/tasks.org" "Inbox")
+  ;;                                "* TODO %?%a")
+  ;;                               ))
 
   ;; helm
   ;;  key
