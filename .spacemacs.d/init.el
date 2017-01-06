@@ -31,6 +31,8 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     csv
+     python
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
@@ -44,6 +46,7 @@ values."
      git
      markdown
      org
+     org-task
      ruby-on-rails
      (ruby :variables ruby-enable-enh-ruby-mode t)
      javascript
@@ -69,6 +72,7 @@ values."
                                       ddskk
                                       enh-ruby-mode
                                       coffee-mode
+                                      highlight-indent-guides
                                       js2-mode
                                       ox-reveal
                                       ox-gfm
@@ -109,7 +113,7 @@ values."
    ;; when the current branch is not `develop'. Note that checking for
    ;; new versions works via git commands, thus it calls GitHub services
    ;; whenever you start Emacs. (default nil)
-   dotspacemacs-check-for-update nil
+   dotspacemacs-check-for-update t
    ;; If non-nil, a form that evaluates to a package directory. For example, to
    ;; use different package directories for different Emacs versions, set this
    ;; to `emacs-version'.
@@ -325,11 +329,23 @@ you should place your code here."
   ;; General
   (setq truncate-lines t)
   (setq mac-command-modifier 'meta)
+  (setq max-lisp-eval-depth 2000)
 
-  ;; Indent mode
-  (indent-guide-global-mode t)
+  ;; emacs-macの時だけ normal state に入ったらIMEをオフにする
+  (when (functionp 'mac-select-input-source)
+    (add-hook 'evil-normal-state-entry-hook
+              (lambda () (interactive) (mac-select-input-source "com.google.inputmethod.Japanese.Roman"))
+              ))
+
+  ;; Indent mode (vertical highlight)
+  (add-hook 'prog-mode-hook '(lambda () (highlight-indent-guides-mode t)))
   (setq indent-guide-delay 1)
-  (setq indent-guide-recursive t)
+  ;; t にすると起動時に Error running timer: (error "Variable binding depth exceeds max-specpdl-size")となり indent-guide-mode が機能しない
+  ;; (setq indent-guide-recursive t)
+
+  ;; ;; :w を :wm としてしまうので新たにマップ
+  ;;(add-to-list 'evil-ex-commands '("wm" . write))
+  (evil-ex-define-cmd "wm" 'save-buffer)
 
   ;; 見にくいので縦にウィンドウを分割するのを抑止
   (setq split-width-threshold nil)
@@ -345,6 +361,12 @@ you should place your code here."
   (spacemacs/set-leader-keys "s e" 'iedit-mode-toggle-on-function)
   (spacemacs/set-leader-keys "s E" 'evil-iedit-state/iedit-mode)
   (evil-global-set-key 'hybrid (kbd "M-y") 'helm-show-kill-ring)
+  ;; C-z で最小化されるのを防ぐ(Mac用Emacsの設定)
+  (global-unset-key (kbd "C-z"))
+  (evil-global-set-key 'normal (kbd "C-z") 'evil-emacs-state)
+  ;; : のミニバッファで c-b c-a を有効にする
+  (define-key evil-ex-completion-map (kbd "C-b") 'backward-char)
+  (define-key evil-ex-completion-map (kbd "C-a") 'beginning-of-line)
 
   ;; jsx
   (add-to-list 'auto-mode-alist '("\\.jsx$" . js2-jsx-mode))
@@ -385,23 +407,21 @@ you should place your code here."
 # ^ non-nil の場合にときに実行される
 # --
 $0")
-
-  ;;  key
+  ;; skk key
   (setq skk-sticky-key ";")
   (define-key minibuffer-local-map (kbd "C-x C-j") '(lambda () (interactive) (skk-mode t)))
-  (evil-global-set-key 'hybrid (kbd "C-j") '(lambda () (interactive)
-                                                  (if skk-henkan-mode
-                                                      (skk-kakutei)
-                                                    (skk-mode t))))
+  (define-key evil-ex-completion-map (kbd "C-x C-j") '(lambda () (interactive) (skk-mode t)))
+  (define-key evil-ex-completion-map (kbd "C-x C-j") '(lambda () (interactive) (skk-mode t)))
+  (evil-global-set-key 'hybrid (kbd "C-j") 'my-skk-c-j)
   (evil-global-set-key 'hybrid (kbd "C-x C-j") '(lambda () (interactive) (skk-mode t)))
-  ;; C-j でひらがなモードに戻る。ただし変換中は確定にする
-  (evil-global-set-key 'hybrid (kbd "C-j") (lambda () (interactive)
-                                             (if skk-henkan-mode
-                                                 (skk-kakutei)
-                                               (skk-mode 1))))
   (add-hook 'evil-normal-state-entry-hook '(lambda () (interactive) (skk-mode -1)))
 
-  ;; company-mode keybind
+  ;; company-mode
+  (eval-after-load "markdown-mode"
+    '(progn
+     (setq company-global-modes '(not markdown-mode))
+     (add-hook 'markdown-mode-hook (lambda () (company-mode -1)))
+     ))
   (define-key company-active-map (kbd "C-n") 'company-select-next)
   (define-key company-active-map (kbd "C-p") 'company-select-previous)
   (define-key company-active-map (kbd "C-s") 'company-filter-candidates)
@@ -426,15 +446,40 @@ $0")
   (spacemacs/set-leader-keys "a e n" 'geeknote-notebook-list)
   (spacemacs/set-leader-keys "a e N" 'geeknote-find-in-notebook)
 
-  ;; org-mode
-  (setq org-bullets-bullet-list '("■" "◆" "▲" "≫" "▶" "▷"))
-  (spacemacs/set-leader-keys "o c" 'org-capture)
-  (setq org-refile-targets '((nil  :maxlevel . 6)))
-  (setq org-agenda-files '("~/Documents/org/tasks.org"))
-  (spacemacs/set-leader-keys "f a" (defun my-org-find-task-file () (interactive) (find-file (-first-item org-agenda-files))))
-  (spacemacs/toggle-mode-line-org-clock-on)
-  (setq org-global-properties '(("Effort_ALL" . "00:00 00:05 00:15 00:30 01:00")))
-  (setq org-columns-default-format "%25ITEM %TODO %3PRIORITY %EFFORT(Effort){:} %CLOCKSUM %TAGS")
+  ;; monkey patch フォークしたバージョンだと tags が tag になっている関係で
+  ;; タグがサポート出来ない。タグの部分は削除する。
+  (defun geeknote-create (title)
+    "Create a new note with the given title.
+
+TITLE the title of the new note to be created."
+    (interactive "sName: ")
+    (message (format "geeknote creating note: %s" title))
+    (let ((note-title (geeknote--parse-title title))
+          (note-notebook (geeknote--parse-notebook title)))
+      (async-shell-command
+       (format (concat geeknote-command " create --content WRITE --title %s"
+                       (when note-notebook " --notebook %s"))
+               (shell-quote-argument note-title)
+               (shell-quote-argument (or note-notebook ""))))))
+
+  ;; ;; org-mode
+  ;; (setq org-bullets-bullet-list '("■" "◆" "▲" "≫" "▶" "▷"))
+  ;; (setq org-refile-targets '((nil  :maxlevel . 6)))
+  ;; (setq org-agenda-files '("~/Documents/org/tasks.org"))
+  ;; (spacemacs/set-leader-keys "f a" (defun my-org-find-task-file () (interactive) (find-file (-first-item org-agenda-files))))
+  ;; (spacemacs/toggle-mode-line-org-clock-on)
+  ;; (setq org-global-properties '(("Effort_ALL" . "00:00 00:05 00:15 00:30 01:00")))
+  ;; (setq org-columns-default-format "%25ITEM %TODO %3PRIORITY %EFFORT(Effort){:} %CLOCKSUM %TAGS")
+  ;; (spacemacs/set-leader-keys "o c" 'org-capture)
+  ;; (setq org-capture-templates `(
+  ;;                               ("c" "Task" entry (file+headline "~/Documents/org/tasks.org" "Inbox")
+  ;;                                "* TODO %^{Title}\n")
+  ;;                               ("p" "Protocol" entry (file+headline "~/Documents/org/tasks.org" "Inbox")
+  ;;                                "* TODO %?%a")
+  ;;                               ))
+
+  ;; 翻訳
+  (spacemacs/set-google-translate-languages "en" "ja")
 
   ;; helm
   ;;  key
@@ -462,6 +507,7 @@ $0")
 
   ;; markdown
   (setq markdown-command "markdown2")
+  (setq markdown-list-indent-width 2)
   (setq markdown-xhtml-header-content
         "<link href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\"
                rel=\"stylesheet\" integrity=\"sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u\"
@@ -501,6 +547,7 @@ $0")
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(company-global-modes (quote (not markdown-mode)))
  '(dash-at-point-mode-alist
    (quote
     ((actionscript-mode . "actionscript")
@@ -550,7 +597,12 @@ $0")
      (vim-mode . "vim")
      (yaml-mode . "chef,ansible"))))
  '(indent-guide-delay 0.1)
- '(indent-guide-recursive t))
+ '(mac-pass-command-to-system nil)
+ '(mac-pass-control-to-system t)
+ '(markdown-command "markdown2")
+ '(package-selected-packages
+   (quote
+    (highlight-indent-guides csv-mode yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic which-key web-mode rspec-mode pug-mode projectile-rails inflections org-projectile info+ indent-guide hungry-delete htmlize helm-dash helm-ag google-translate git-link evil-matchit evil-magit dumb-jump ddskk aggressive-indent ace-link smartparens bind-map highlight helm helm-core yasnippet skewer-mode js2-mode magit magit-popup git-commit with-editor hydra inf-ruby spacemacs-theme yari yaml-mode ws-butler window-numbering web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tagedit spaceline smeargle slim-mode simple-httpd scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop robe restart-emacs rbenv rake rainbow-delimiters quelpa popwin persp-mode pcache paradox ox-qmd orgit org-present org-pomodoro org-plus-contrib org-download org-bullets open-junk-file neotree move-text mmm-mode minitest markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc ido-vertical-mode howm hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet golden-ratio gnuplot gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-gutter-fringe git-gutter-fringe+ gh-md geeknote flycheck-pos-tip flx-ido fill-column-indicator feature-mode fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu enh-ruby-mode emmet-mode elisp-slime-nav edit-server edbi diff-hl define-word dash-at-point company-web company-tern company-statistics column-enforce-mode coffee-mode clean-aindent-mode chruby cdb ccc bundler auto-yasnippet auto-highlight-symbol auto-compile adaptive-wrap ace-window ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
