@@ -31,6 +31,7 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     ocaml
      python
      windows-scripts
      yaml
@@ -70,6 +71,8 @@ values."
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(
+                                      plantuml-mode
+                                      logview
                                       highlight-indent-guides
                                       quickrun
                                       howm
@@ -217,7 +220,7 @@ values."
    ;; Size (in MB) above which spacemacs will prompt to open the large file
    ;; literally to avoid performance issues. Opening a file literally means that
    ;; no major mode or minor modes are active. (default is 1)
-   dotspacemacs-large-file-size 1
+   dotspacemacs-large-file-size 15
    ;; Location where to auto-save files. Possible values are `original' to
    ;; auto-save the file in-place, `cache' to auto-save the file to another
    ;; file stored in the cache directory and `nil' to disable auto-saving.
@@ -325,6 +328,9 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
+  (setq auto-completion-return-key-behavior 'nil)
+  (setq auto-completion-tab-key-behavior 'complete)
+
   )
 
 (defun dotspacemacs/user-config ()
@@ -346,6 +352,7 @@ you should place your code here."
                                 (recentf-save-list)))
   (when (fboundp 'ime-force-off)
     (add-hook 'evil-normal-state-entry-hook 'ime-force-off)
+    (setq w32-ime-show-mode-line nil)
     )
   ;; General keybindings
   (-each '(normal visual insert motion hybrid)
@@ -360,6 +367,7 @@ you should place your code here."
   ;; company
   (define-key company-active-map (kbd "C-n") 'company-select-next)
   (define-key company-active-map (kbd "C-p") 'company-select-previous)
+  (define-key company-active-map (kbd "C-h") 'delete-backward-char)
 
   ;; org-mode
   (setq org-directory "~/Documents/org")
@@ -574,7 +582,8 @@ you should place your code here."
   (setq image-dired-dir "~/.emacs.d/.cache/image-dired")
 
   ;; Local file
-  (add-to-list 'file-coding-system-alist '("[T]F0004KE\\'" cp932-dos))
+  (add-to-list 'file-coding-system-alist '("[T]F0004KE\\'" . cp932-dos))
+  (add-to-list 'file-coding-system-alist '("aquaAll[0-9]\\.log.*" . cp932-dos))
 
   ;; jsx
   (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js2-jsx-mode))
@@ -599,20 +608,26 @@ View mode for aquaAll.log
 
   ;; markdown
   (setq markdown-command "pandoc")
-  ;; (sp-local-pair 'markdown-mode "```" "\n```")
+  (sp-local-pair 'markdown-mode "```" "```")
   (add-to-list 'auto-mode-alist '("\\.md\\.txt" . markdown-mode))
+  (spacemacs/set-leader-keys-for-major-mode 'markdown-mode (kbd "n") 'mmm-narrow-to-submode-region)
+
   ;; dos をシンタックスハイライト
   (with-eval-after-load "mmm-mode"
     (mmm-add-classes
      '((markdown-elisp :submode emacs-lisp-mode :front "^```elisp[\n]+" :back "^```$")))
     (mmm-add-classes
      '((markdown-dos :submode dos-mode :face mmm-declaration-submode-face :front "^```dos[\n]+" :back "^```$")))
+    (mmm-add-classes
+     '((markdown-plantuml :submode plantuml-mode :face mmm-declaration-submode-face :front "^```plantuml[\n]+" :back "^```$")))
     ;; クラスとメジャーモードを紐付け
     (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-dos)
     (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-elisp)
+    (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-plantuml)
     )
   ;; howm
   ;; keybind "w" is Wiki
+  ;;  (setq howm-view-title-header "#")
   (require 'howm)
   (spacemacs/set-leader-keys "a w w" 'howm-create)
   (spacemacs/set-leader-keys "a w m" 'howm-menu)
@@ -629,6 +644,10 @@ View mode for aquaAll.log
   ;; python
   (remove-hook 'python-mode-hook 'anaconda-mode)
   (remove-hook 'python-mode-hook 'anaconda-eldoc-mode)
+
+  ;;plantuml
+  (setq plantuml-jar-path "c:/tools/plantuml/plantuml.jar")
+
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -649,6 +668,13 @@ View mode for aquaAll.log
      (minibuffer . t)
      (menu-bar-lines . t))))
  '(evil-want-Y-yank-to-eol nil)
+ '(logview-additional-submodes
+   (quote
+    (("AquaAllLog"
+      (format . "NAME TIMESTAMP,THREAD LEVEL  :")
+      (levels . "SLF4J")
+      (timestamp)
+      (aliases)))))
  '(magit-git-executable "c:/Program Files/Git/bin/git.exe")
  '(org-agenda-custom-commands
    (quote
@@ -683,7 +709,7 @@ View mode for aquaAll.log
  '(org-startup-indented t)
  '(package-selected-packages
    (quote
-    (powerline spinner autothemer bind-key highlight bind-map highlight-indent-guides minitest hide-comnt quickrun howm yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic geeknote ox-reveal pcache hydra projectile iedit anzu smartparens evil undo-tree helm helm-core avy async f s helm-dash powershell zonokai-theme zenburn-theme zen-and-art-theme underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme tao-theme tangotango-theme tango-plus-theme tango-2-theme sunny-day-theme sublime-themes subatomic256-theme subatomic-theme stekene-theme spacegray-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme seti-theme reverse-theme railscasts-theme purple-haze-theme professional-theme planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme pastels-on-dark-theme organic-green-theme omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme niflheim-theme naquadah-theme mustang-theme monokai-theme monochrome-theme molokai-theme moe-theme minimal-theme material-theme majapahit-theme lush-theme light-soap-theme jbeans-theme jazz-theme ir-black-theme inkpot-theme heroku-theme hemisu-theme hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme gandalf-theme flatui-theme flatland-theme firebelly-theme farmhouse-theme espresso-theme dracula-theme django-theme darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme cyberpunk-theme colorsarenice-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes afternoon-theme enh-ruby-mode edbi epc ctable concurrent ddskk cdb calfw zeal-at-point yaml-mode typing japanese-holidays imenu-list deferred ccc csv-nav google-maps orgit magit-gitflow evil-magit magit magit-popup web-mode web-beautify visual-basic-mode tagedit swift-mode sql-indent smeargle slim-mode scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv pug-mode projectile-rails rake inflections org-projectile org-present org org-pomodoro alert log4e gntp org-download mmm-mode markdown-toc livid-mode skewer-mode simple-httpd less-css-mode json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc htmlize helm-gitignore helm-css-scss helm-company helm-c-yasnippet haml-mode gnuplot gmail-message-mode ham-mode markdown-mode html-to-markdown gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md feature-mode git-commit with-editor dash emmet-mode edit-server csv-mode company-web web-completion-data company-tern dash-functional tern company-statistics company coffee-mode chruby bundler inf-ruby auto-yasnippet yasnippet ac-ispell auto-complete ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spacemacs-theme spaceline restart-emacs request rainbow-delimiters quelpa popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide ido-vertical-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
+    (utop tuareg caml ocp-indent merlin plantuml-mode logview datetime log4j-mode powerline spinner autothemer bind-key highlight bind-map highlight-indent-guides minitest hide-comnt quickrun howm yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic geeknote ox-reveal pcache hydra projectile iedit anzu smartparens evil undo-tree helm helm-core avy async f s helm-dash powershell zonokai-theme zenburn-theme zen-and-art-theme underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme tao-theme tangotango-theme tango-plus-theme tango-2-theme sunny-day-theme sublime-themes subatomic256-theme subatomic-theme stekene-theme spacegray-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme seti-theme reverse-theme railscasts-theme purple-haze-theme professional-theme planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme pastels-on-dark-theme organic-green-theme omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme niflheim-theme naquadah-theme mustang-theme monokai-theme monochrome-theme molokai-theme moe-theme minimal-theme material-theme majapahit-theme lush-theme light-soap-theme jbeans-theme jazz-theme ir-black-theme inkpot-theme heroku-theme hemisu-theme hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme gandalf-theme flatui-theme flatland-theme firebelly-theme farmhouse-theme espresso-theme dracula-theme django-theme darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme cyberpunk-theme colorsarenice-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes afternoon-theme enh-ruby-mode edbi epc ctable concurrent ddskk cdb calfw zeal-at-point yaml-mode typing japanese-holidays imenu-list deferred ccc csv-nav google-maps orgit magit-gitflow evil-magit magit magit-popup web-mode web-beautify visual-basic-mode tagedit swift-mode sql-indent smeargle slim-mode scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv pug-mode projectile-rails rake inflections org-projectile org-present org org-pomodoro alert log4e gntp org-download mmm-mode markdown-toc livid-mode skewer-mode simple-httpd less-css-mode json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc htmlize helm-gitignore helm-css-scss helm-company helm-c-yasnippet haml-mode gnuplot gmail-message-mode ham-mode markdown-mode html-to-markdown gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md feature-mode git-commit with-editor dash emmet-mode edit-server csv-mode company-web web-completion-data company-tern dash-functional tern company-statistics company coffee-mode chruby bundler inf-ruby auto-yasnippet yasnippet ac-ispell auto-complete ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spacemacs-theme spaceline restart-emacs request rainbow-delimiters quelpa popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide ido-vertical-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
