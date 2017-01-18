@@ -7,7 +7,7 @@
 You should not put any user code in this function besides modifying the variable
 values."
   (setq-default
-   ;; Bash distribution to use. This is a layer contained in the directory
+   ;; Base distribution to use. This is a layer contained in the directory
    ;; `+distribution'. For now available distributions are `spacemacs-base'
    ;; or `spacemacs'. (default 'spacemacs)
    dotspacemacs-distribution 'spacemacs
@@ -31,7 +31,6 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
-     ocaml
      python
      windows-scripts
      yaml
@@ -51,7 +50,8 @@ values."
      git
      markdown
      (org :variables org-enable-reveal-js-support t)
-     (ruby :variables ruby-enable-enh-ruby-mode t)
+     ruby
+     ;(ruby :variables ruby-enable-enh-ruby-mode t)
      javascript
      sql
      swift
@@ -61,6 +61,7 @@ values."
      html
      chrome
      csv
+     sql
      evernote
      ;; spell-checking
      ;; syntax-checking
@@ -71,18 +72,18 @@ values."
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(
+                                      rainbow-mode
                                       plantuml-mode
                                       logview
                                       highlight-indent-guides
                                       quickrun
                                       howm
                                       edbi
-                                      (aqua-all-log-mode :location local)
+                                      ;; (aqua-all-log-mode :location local)
                                       ddskk
                                       imenu-list
                                       ox-reveal
                                       edit-server
-                                      enh-ruby-mode
                                       zeal-at-point
                                       csv-nav
                                       calfw
@@ -163,7 +164,7 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(monokai
+   dotspacemacs-themes '(;;monokai
                          spacemacs-dark
                          spacemacs-light)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
@@ -189,7 +190,7 @@ values."
    ;; pressing `<leader> m`. Set it to `nil` to disable it. (default ",")
    dotspacemacs-major-mode-leader-key ","
    ;; Major mode leader key accessible in `emacs state' and `insert state'.
-   ;; (default "C-M-m)
+   ;; (default "C-M-m")
    dotspacemacs-major-mode-emacs-leader-key "C-M-m"
    ;; These variables control whether separate commands are bound in the GUI to
    ;; the key pairs C-i, TAB and C-m, RET.
@@ -246,7 +247,7 @@ values."
    dotspacemacs-enable-paste-transient-state nil
    ;; Which-key delay in seconds. The which-key buffer is the popup listing
    ;; the commands bound to the current keystroke sequence. (default 0.4)
-   dotspacemacs-which-key-delay 0.2
+   dotspacemacs-which-key-delay 0.4
    ;; Which-key frame position. Possible values are `right', `bottom' and
    ;; `right-then-bottom'. right-then-bottom tries to display the frame to the
    ;; right; if there is insufficient space it displays it at the bottom.
@@ -343,6 +344,9 @@ you should place your code here."
   ;; General
   (setq truncate-lines t)
   (setq find-program "c:/tools/msys64/usr/bin/find.exe")
+  ;; フルパスのファイル名をタイトルバーに表示
+  (setq frame-title-format
+         (format "%%f - Emacs@%s" (system-name)))
 
   ;; for Windows
   (setq process-coding-system-alist '(("[pP][lL][iI][nN][kK]" undecided-dos . undecided-dos)
@@ -359,6 +363,8 @@ you should place your code here."
     (lambda(state)
       (evil-global-set-key state (kbd "C-;") 'helm-for-files)
       ))
+  (global-set-key (kbd "C-@") 'evil-normal-state)
+
   (evil-global-set-key 'hybrid (kbd "C-h") 'delete-backward-char)
   (define-key minibuffer-local-map (kbd "C-h") 'delete-backward-char)
   ;; evil 置換する際に c-b で戻れないと不便
@@ -389,7 +395,7 @@ you should place your code here."
   (require 'org-protocol)
   (setq org-capture-templates `(
                                 ("c" "Task" entry (file+headline ,(car org-agenda-files) "Inbox")
-                                 "* TODO %^{Title}\n")
+                                 "* TODO %^{Title} :inbox:\n")
                                 ("p" "Protocol" entry (file+headline ,(car org-agenda-files) "Inbox")
                                  "* TODO %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
                                 ("L" "Protocol Link" entry (file+headline ,(car org-agenda-files) "Inbox")
@@ -502,8 +508,8 @@ you should place your code here."
 
 
    ;; ruby
+   (setq ruby-deep-indent-paren nil) ;;
   ;; enh-ruby-mode
-  (setq ruby-enable-enh-ruby-mode t)
 
   ;; ddskk
   (setq skk-large-jisyo "~/skk/SKK-JISYO.L")
@@ -588,6 +594,8 @@ you should place your code here."
   ;; jsx
   (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js2-jsx-mode))
 
+;;  (setq paradox-github-token "574b93aa47024de1894a550e93cd0d69f8f89c06")
+  (setq paradox-github-token nil)
   ;; visual-basic
   (add-to-list 'auto-mode-alist '("\\.vbs?" . visual-basic-mode))
 
@@ -608,22 +616,35 @@ View mode for aquaAll.log
 
   ;; markdown
   (setq markdown-command "pandoc")
-  (sp-local-pair 'markdown-mode "```" "```")
+  ;; yasnippet に変更
+  ;; (sp-local-pair 'markdown-mode "```" "```")
   (add-to-list 'auto-mode-alist '("\\.md\\.txt" . markdown-mode))
   (spacemacs/set-leader-keys-for-major-mode 'markdown-mode (kbd "n") 'mmm-narrow-to-submode-region)
 
-  ;; dos をシンタックスハイライト
+
   (with-eval-after-load "mmm-mode"
-    (mmm-add-classes
-     '((markdown-elisp :submode emacs-lisp-mode :front "^```elisp[\n]+" :back "^```$")))
-    (mmm-add-classes
-     '((markdown-dos :submode dos-mode :face mmm-declaration-submode-face :front "^```dos[\n]+" :back "^```$")))
-    (mmm-add-classes
-     '((markdown-plantuml :submode plantuml-mode :face mmm-declaration-submode-face :front "^```plantuml[\n]+" :back "^```$")))
-    ;; クラスとメジャーモードを紐付け
-    (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-dos)
-    (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-elisp)
-    (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-plantuml)
+    ;; markdown で mmm-mode をまとめて定義する
+    (-each '("sh" "plantuml" "dos" "css" "js2" "web" "emacs-lisp") ;; 引数にメジャーモードの関数 -mode を抜いた文字列のリストを渡す
+      '(lambda (mode-name)
+         (let ((md-class (intern (concat "markdown-" mode-name))))
+           (mmm-add-classes
+            (list (list md-class
+                        :submode (intern (concat mode-name "-mode"))
+                        :face 'mmm-declaration-submode-face
+                        :front (concat "^```" mode-name "[\n]+")
+                        :back "^```$")))
+           (mmm-add-mode-ext-class 'markdown-mode nil md-class)
+           )))
+    ;; (mmm-add-classes
+    ;;  '((markdown-elisp :submode emacs-lisp-mode :front "^```elisp[\n]+" :back "^```$")))
+    ;; (mmm-add-classes
+    ;;  '((markdown-dos :submode dos-mode :face mmm-declaration-submode-face :front "^```dos[\n]+" :back "^```$")))
+    ;; (mmm-add-classes
+    ;;  '((markdown-plantuml :submode plantuml-mode :face mmm-declaration-submode-face :front "^```plantuml[\n]+" :back "^```$")))
+    ;; ;; クラスとメジャーモードを紐付け
+    ;; (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-dos)
+    ;; (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-elisp)
+    ;; (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-plantuml)
     )
   ;; howm
   ;; keybind "w" is Wiki
@@ -676,6 +697,7 @@ View mode for aquaAll.log
       (timestamp)
       (aliases)))))
  '(magit-git-executable "c:/Program Files/Git/bin/git.exe")
+ '(markdown-list-indent-width 2)
  '(org-agenda-custom-commands
    (quote
     (("a" "Agenda for a week from today and Todays task."
@@ -709,7 +731,10 @@ View mode for aquaAll.log
  '(org-startup-indented t)
  '(package-selected-packages
    (quote
-    (utop tuareg caml ocp-indent merlin plantuml-mode logview datetime log4j-mode powerline spinner autothemer bind-key highlight bind-map highlight-indent-guides minitest hide-comnt quickrun howm yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic geeknote ox-reveal pcache hydra projectile iedit anzu smartparens evil undo-tree helm helm-core avy async f s helm-dash powershell zonokai-theme zenburn-theme zen-and-art-theme underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme tao-theme tangotango-theme tango-plus-theme tango-2-theme sunny-day-theme sublime-themes subatomic256-theme subatomic-theme stekene-theme spacegray-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme seti-theme reverse-theme railscasts-theme purple-haze-theme professional-theme planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme pastels-on-dark-theme organic-green-theme omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme niflheim-theme naquadah-theme mustang-theme monokai-theme monochrome-theme molokai-theme moe-theme minimal-theme material-theme majapahit-theme lush-theme light-soap-theme jbeans-theme jazz-theme ir-black-theme inkpot-theme heroku-theme hemisu-theme hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme gandalf-theme flatui-theme flatland-theme firebelly-theme farmhouse-theme espresso-theme dracula-theme django-theme darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme cyberpunk-theme colorsarenice-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes afternoon-theme enh-ruby-mode edbi epc ctable concurrent ddskk cdb calfw zeal-at-point yaml-mode typing japanese-holidays imenu-list deferred ccc csv-nav google-maps orgit magit-gitflow evil-magit magit magit-popup web-mode web-beautify visual-basic-mode tagedit swift-mode sql-indent smeargle slim-mode scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv pug-mode projectile-rails rake inflections org-projectile org-present org org-pomodoro alert log4e gntp org-download mmm-mode markdown-toc livid-mode skewer-mode simple-httpd less-css-mode json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc htmlize helm-gitignore helm-css-scss helm-company helm-c-yasnippet haml-mode gnuplot gmail-message-mode ham-mode markdown-mode html-to-markdown gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md feature-mode git-commit with-editor dash emmet-mode edit-server csv-mode company-web web-completion-data company-tern dash-functional tern company-statistics company coffee-mode chruby bundler inf-ruby auto-yasnippet yasnippet ac-ispell auto-complete ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spacemacs-theme spaceline restart-emacs request rainbow-delimiters quelpa popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide ido-vertical-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
+    (rainbow-mode utop tuareg caml ocp-indent merlin plantuml-mode logview datetime log4j-mode powerline spinner autothemer bind-key highlight bind-map highlight-indent-guides minitest hide-comnt quickrun howm yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic geeknote ox-reveal pcache hydra projectile iedit anzu smartparens evil undo-tree helm helm-core avy async f s helm-dash powershell zonokai-theme zenburn-theme zen-and-art-theme underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme tao-theme tangotango-theme tango-plus-theme tango-2-theme sunny-day-theme sublime-themes subatomic256-theme subatomic-theme stekene-theme spacegray-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme seti-theme reverse-theme railscasts-theme purple-haze-theme professional-theme planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme pastels-on-dark-theme organic-green-theme omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme niflheim-theme naquadah-theme mustang-theme monokai-theme monochrome-theme molokai-theme moe-theme minimal-theme material-theme majapahit-theme lush-theme light-soap-theme jbeans-theme jazz-theme ir-black-theme inkpot-theme heroku-theme hemisu-theme hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme gandalf-theme flatui-theme flatland-theme firebelly-theme farmhouse-theme espresso-theme dracula-theme django-theme darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme cyberpunk-theme colorsarenice-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes afternoon-theme enh-ruby-mode edbi epc ctable concurrent ddskk cdb calfw zeal-at-point yaml-mode typing japanese-holidays imenu-list deferred ccc csv-nav google-maps orgit magit-gitflow evil-magit magit magit-popup web-mode web-beautify visual-basic-mode tagedit swift-mode sql-indent smeargle slim-mode scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv pug-mode projectile-rails rake inflections org-projectile org-present org org-pomodoro alert log4e gntp org-download mmm-mode markdown-toc livid-mode skewer-mode simple-httpd less-css-mode json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc htmlize helm-gitignore helm-css-scss helm-company helm-c-yasnippet haml-mode gnuplot gmail-message-mode ham-mode markdown-mode html-to-markdown gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md feature-mode git-commit with-editor dash emmet-mode edit-server csv-mode company-web web-completion-data company-tern dash-functional tern company-statistics company coffee-mode chruby bundler inf-ruby auto-yasnippet yasnippet ac-ispell auto-complete ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spacemacs-theme spaceline restart-emacs request rainbow-delimiters quelpa popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide ido-vertical-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line)))
+ '(paradox-github-token t)
+ '(web-mode-attr-value-indent-offset nil)
+ '(web-mode-markup-indent-offset 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
