@@ -48,7 +48,7 @@ values."
      org
      org-task
      ruby-on-rails
-     (ruby :variables ruby-enable-enh-ruby-mode t)
+     (ruby :variables ruby-enable-enh-ruby-mode nil)
      javascript
      html
      react
@@ -67,6 +67,13 @@ values."
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(
+                                      rainbow-mode
+                                      (grep-edit :location (recipe :fetcher url :repo "https://www.emacswiki.org/emacs/download/grep-edit.el"))
+                                      lispxmp
+                                      flycheck-plantuml
+                                      plantuml-mode
+                                      ox-pandoc
+                                      quickrun
                                       howm
                                       edbi
                                       ddskk
@@ -161,7 +168,7 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
    ;; size to make separators look not too crappy.
-   dotspacemacs-default-font '("Ricty Diminished"
+   dotspacemacs-default-font '("Ricty Diminished for Powerline"
                                :size 16
                                :weight normal
                                :width normal
@@ -180,7 +187,7 @@ values."
    ;; pressing `<leader> m`. Set it to `nil` to disable it. (default ",")
    dotspacemacs-major-mode-leader-key ","
    ;; Major mode leader key accessible in `emacs state' and `insert state'.
-   ;; (default "C-M-m)
+   ;; (default "C-M-m")
    dotspacemacs-major-mode-emacs-leader-key "C-M-m"
    ;; These variables control whether separate commands are bound in the GUI to
    ;; the key pairs C-i, TAB and C-m, RET.
@@ -278,7 +285,7 @@ values."
    ;; If non nil line numbers are turned on in all `prog-mode' and `text-mode'
    ;; derivatives. If set to `relative', also turns on relative line numbers.
    ;; (default nil)
-   dotspacemacs-line-numbers 'text-mode
+   dotspacemacs-line-numbers 'prog-mode
    ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
    ;; (default nil)
    dotspacemacs-smartparens-strict-mode nil
@@ -316,6 +323,8 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
+  (setq auto-completion-tab-key-behavior 'complete)
+  (setq auto-completion-return-key-behavior 'complete)
   )
 
 (defun dotspacemacs/user-config ()
@@ -329,12 +338,16 @@ you should place your code here."
   ;; General
   (setq truncate-lines t)
   (setq mac-command-modifier 'meta)
+  (setq mac-option-modifier 'meta)
   (setq max-lisp-eval-depth 2000)
 
   ;; emacs-macの時だけ normal state に入ったらIMEをオフにする
+  (defun my-mac-select-ascii-input-source ()
+    (mac-select-input-source "com.google.inputmethod.Japanese.Roman"))
+    ;; (mac-select-input-source "com.apple.inputmethod.Kotoeri.Roman"))
   (when (functionp 'mac-select-input-source)
     (add-hook 'evil-normal-state-entry-hook
-              (lambda () (interactive) (mac-select-input-source "com.google.inputmethod.Japanese.Roman"))
+              'my-mac-select-ascii-input-source
               ))
 
   ;; Indent mode (vertical highlight)
@@ -417,11 +430,12 @@ $0")
   (add-hook 'evil-normal-state-entry-hook '(lambda () (interactive) (skk-mode -1)))
 
   ;; company-mode
-  (eval-after-load "markdown-mode"
-    '(progn
+  (with-eval-after-load "markdown-mode"
      (setq company-global-modes '(not markdown-mode))
-     (add-hook 'markdown-mode-hook (lambda () (company-mode -1)))
-     ))
+     (add-hook 'markdown-mode-hook 'spacemacs/toggle-auto-completion-off))
+  (setq auto-completion-enable-help-tooltip t)
+  (setq auto-completion-enable-snippets-in-popup t)
+
   (define-key company-active-map (kbd "C-n") 'company-select-next)
   (define-key company-active-map (kbd "C-p") 'company-select-previous)
   (define-key company-active-map (kbd "C-s") 'company-filter-candidates)
@@ -462,21 +476,9 @@ TITLE the title of the new note to be created."
                (shell-quote-argument note-title)
                (shell-quote-argument (or note-notebook ""))))))
 
+
   ;; ;; org-mode
-  ;; (setq org-bullets-bullet-list '("■" "◆" "▲" "≫" "▶" "▷"))
-  ;; (setq org-refile-targets '((nil  :maxlevel . 6)))
-  ;; (setq org-agenda-files '("~/Documents/org/tasks.org"))
-  ;; (spacemacs/set-leader-keys "f a" (defun my-org-find-task-file () (interactive) (find-file (-first-item org-agenda-files))))
-  ;; (spacemacs/toggle-mode-line-org-clock-on)
-  ;; (setq org-global-properties '(("Effort_ALL" . "00:00 00:05 00:15 00:30 01:00")))
-  ;; (setq org-columns-default-format "%25ITEM %TODO %3PRIORITY %EFFORT(Effort){:} %CLOCKSUM %TAGS")
-  ;; (spacemacs/set-leader-keys "o c" 'org-capture)
-  ;; (setq org-capture-templates `(
-  ;;                               ("c" "Task" entry (file+headline "~/Documents/org/tasks.org" "Inbox")
-  ;;                                "* TODO %^{Title}\n")
-  ;;                               ("p" "Protocol" entry (file+headline "~/Documents/org/tasks.org" "Inbox")
-  ;;                                "* TODO %?%a")
-  ;;                               ))
+  (require 'ox-pandoc)
 
   ;; 翻訳
   (spacemacs/set-google-translate-languages "en" "ja")
@@ -506,7 +508,7 @@ TITLE the title of the new note to be created."
        ))
 
   ;; markdown
-  (setq markdown-command "markdown2")
+  (setq markdown-command "pandoc")
   (setq markdown-list-indent-width 2)
   (setq markdown-xhtml-header-content
         "<link href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\"
@@ -517,12 +519,108 @@ TITLE the title of the new note to be created."
                  crossorigin=\"anonymous\"></script>
          <style type=\"text/css\"> body{ padding: 2em} </style>"
         )
+  (spacemacs/set-leader-keys-for-minor-mode 'markdown-mode (kbd "n") 'mmm-narrow-to-submode-region)
   ;; markdown で バッククォートブロックを入力しやすくする
-  (sp-local-pair 'markdown-mode "```" "\n```")
+  ;; (sp-local-pair 'markdown-mode "```" "```")
 
   ;; projectile
   (projectile-rails-global-mode)
   (evil-define-key 'normal projectile-rails-mode-map (kbd "C-<return>") 'projectile-rails-goto-file-at-point)
+
+  ;;; mmm
+  (with-eval-after-load "mmm-mode"
+    (-each '("sh"
+             "haml"
+             "html"
+             "css"
+             "html-erb"
+             "plantuml"
+             "dos"
+             "css"
+             "js2"
+             "web"
+             "emacs-lisp") ;; 引数にメジャーモードの関数 -mode を抜いた文字列のリストを渡す
+      '(lambda (mode-name)
+         (let ((md-class (intern (concat "markdown-" mode-name))))
+           (mmm-add-classes
+            (list (list md-class
+                        :submode (intern (concat mode-name "-mode"))
+                        :face 'mmm-declaration-submode-face
+                        :front (concat "^```" mode-name "[\n]+")
+                        :back "^```$")))
+           (mmm-add-mode-ext-class 'markdown-mode nil md-class)))))
+
+  ;;; plantuml
+  ;; 改行の後に不要なインデントがされるのを防ぐ
+  (with-eval-after-load "plantuml-mode"
+    (define-key plantuml-mode-map (kbd "<return>") '(lambda () (interactive) (insert "\n")))
+    (setq plantuml-output-type "png")
+  )
+  ;; plantuml-preview をした後に C-g するとデフォルトでは image をテキストで開く
+  ;; しかし svg で画像が生成されていると一行が長すぎて Emacs がフリーズするので q と同じ quit-window  にする
+  (define-key image-mode-map (kbd "C-g") 'quit-window)
+
+  ;;; rails
+  (projectile-rails-global-mode)
+  (add-hook 'projectile-rails-mode-hook
+            '(lambda ()
+               (dolist (mode '(haml-mode))
+                 (spacemacs/set-leader-keys-for-major-mode mode
+                   "rfa" 'projectile-rails-find-locale
+                   "rfc" 'projectile-rails-find-controller
+                   "rfe" 'projectile-rails-find-environment
+                   "rff" 'projectile-rails-find-feature
+                   "rfh" 'projectile-rails-find-helper
+                   "rfi" 'projectile-rails-find-initializer
+                   "rfj" 'projectile-rails-find-javascript
+                   "rfl" 'projectile-rails-find-lib
+                   "rfm" 'projectile-rails-find-model
+                   "rfn" 'projectile-rails-find-migration
+                   "rfo" 'projectile-rails-find-log
+                   "rfp" 'projectile-rails-find-spec
+                   "rfr" 'projectile-rails-find-rake-task
+                   "rfs" 'projectile-rails-find-stylesheet
+                   "rft" 'projectile-rails-find-test
+                   "rfu" 'projectile-rails-find-fixture
+                   "rfv" 'projectile-rails-find-view
+                   "rfy" 'projectile-rails-find-layout
+                   "rf@" 'projectile-rails-find-mailer
+                   ;; Goto file
+                   "rgc" 'projectile-rails-find-current-controller
+                   "rgd" 'projectile-rails-goto-schema
+                   "rge" 'projectile-rails-goto-seeds
+                   "rgh" 'projectile-rails-find-current-helper
+                   "rgj" 'projectile-rails-find-current-javascript
+                   "rgg" 'projectile-rails-goto-gemfile
+                   "rgm" 'projectile-rails-find-current-model
+                   "rgn" 'projectile-rails-find-current-migration
+                   "rgp" 'projectile-rails-find-current-spec
+                   "rgr" 'projectile-rails-goto-routes
+                   "rgs" 'projectile-rails-find-current-stylesheet
+                   "rgt" 'projectile-rails-find-current-test
+                   "rgu" 'projectile-rails-find-current-fixture
+                   "rgv" 'projectile-rails-find-current-view
+                   "rgz" 'projectile-rails-goto-spec-helper
+                   "rg." 'projectile-rails-goto-file-at-point
+                   ;; Rails external commands
+                   "r:" 'projectile-rails-rake
+                   "rcc" 'projectile-rails-generate
+                   "ri" 'projectile-rails-console
+                   "rxs" 'projectile-rails-server
+                   ;; Refactoring 'projectile-rails-mode
+                   "rRx" 'projectile-rails-extract-region)
+                 (spacemacs/declare-prefix-for-mode mode "mr" "rails/rubocop")
+                 (spacemacs/declare-prefix-for-mode mode "mrf" "file"))))
+
+  ;;mc/mark
+  (evil-global-set-key 'visual (kbd "C-*") 'mc/mark-all-like-this-dwim)
+  (evil-global-set-key 'visual (kbd "M-*") 'mc/mark-all-symbols-like-this-in-defun)
+  (evil-global-set-key 'visual (kbd "C-<") 'mc/mark-previous-like-this)
+  (evil-global-set-key 'visual (kbd "C->") 'mc/mark-next-like-this)
+  (evil-global-set-key 'visual (kbd "C-M-<") 'mc/skip-to-previous-like-this)
+  (evil-global-set-key 'visual (kbd "C-M->") 'mc/skip-to-next-like-this)
+  (evil-global-set-key 'visual (kbd "C-S-SPC") 'mc/skip-to-next-like-this)
+
 
   ;; howm
   (require 'howm)
@@ -568,7 +666,7 @@ TITLE the title of the new note to be created."
      (gfm-mode . "markdown")
      (go-mode . "go,godoc")
      (groovy-mode . "groovy")
-     (haml-mode . "ruby,rubygems,rails,haml")
+     (haml-mode . "rails,ruby,rubygems,rails,haml,bootstrap")
      (haskell-mode . "haskell")
      (html-mode . "html,svg,css,bootstrap,foundation,awesome,javascript,jquery,jqueryui,jquerym,angularjs,backbone,marionette,meteor,moo,prototype,ember,lodash,underscore,sencha,extjs,knockout,zepto,cordova,phonegap,yui")
      (jade-mode . "jade")
@@ -586,7 +684,8 @@ TITLE the title of the new note to be created."
      (processing-mode . "processing")
      (puppet-mode . "puppet")
      (python-mode . "python3,django,twisted,sphinx,flask,tornado,sqlalchemy,numpy,scipy,saltcvp")
-     (ruby-mode . "ruby,rubygems,rails")
+     (enh-ruby-mode . "rubygems,rails,ruby")
+     (ruby-mode . "rubygems,rails,ruby")
      (rust-mode . "rust")
      (sass-mode . "sass,compass,bourbon,neat,css")
      (scala-mode . "scala,akka,playscala,scaladoc")
@@ -596,13 +695,17 @@ TITLE the title of the new note to be created."
      (twig-mode . "twig")
      (vim-mode . "vim")
      (yaml-mode . "chef,ansible"))))
- '(indent-guide-delay 0.1)
+ '(indent-guide-delay 0.1 t)
  '(mac-pass-command-to-system nil)
  '(mac-pass-control-to-system t)
  '(markdown-command "markdown2")
+ '(org-agenda-files (quote ("~/Documents/org/tasks.org")))
  '(package-selected-packages
    (quote
-    (highlight-indent-guides csv-mode yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic which-key web-mode rspec-mode pug-mode projectile-rails inflections org-projectile info+ indent-guide hungry-delete htmlize helm-dash helm-ag google-translate git-link evil-matchit evil-magit dumb-jump ddskk aggressive-indent ace-link smartparens bind-map highlight helm helm-core yasnippet skewer-mode js2-mode magit magit-popup git-commit with-editor hydra inf-ruby spacemacs-theme yari yaml-mode ws-butler window-numbering web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tagedit spaceline smeargle slim-mode simple-httpd scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop robe restart-emacs rbenv rake rainbow-delimiters quelpa popwin persp-mode pcache paradox ox-qmd orgit org-present org-pomodoro org-plus-contrib org-download org-bullets open-junk-file neotree move-text mmm-mode minitest markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc ido-vertical-mode howm hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet golden-ratio gnuplot gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-gutter-fringe git-gutter-fringe+ gh-md geeknote flycheck-pos-tip flx-ido fill-column-indicator feature-mode fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu enh-ruby-mode emmet-mode elisp-slime-nav edit-server edbi diff-hl define-word dash-at-point company-web company-tern company-statistics column-enforce-mode coffee-mode clean-aindent-mode chruby cdb ccc bundler auto-yasnippet auto-highlight-symbol auto-compile adaptive-wrap ace-window ace-jump-helm-line ac-ispell))))
+    (rainbow-mode lispxmp company-quickhelp flycheck-plantuml plantuml-mode ox-pandoc ht ox-gfm iedit projectile quickrun org alert log4e gntp json-snatcher json-reformat multiple-cursors haml-mode ham-mode markdown-mode html-to-markdown gitignore-mode fringe-helper git-gutter+ git-gutter pos-tip flycheck epc ctable concurrent deferred web-completion-data dash-functional tern company auto-complete highlight-indent-guides csv-mode yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic which-key web-mode rspec-mode pug-mode projectile-rails inflections org-projectile info+ indent-guide hungry-delete htmlize helm-dash helm-ag google-translate git-link evil-matchit evil-magit dumb-jump ddskk aggressive-indent ace-link smartparens bind-map highlight helm helm-core yasnippet skewer-mode js2-mode magit magit-popup git-commit with-editor hydra inf-ruby spacemacs-theme yari yaml-mode ws-butler window-numbering web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tagedit spaceline smeargle slim-mode simple-httpd scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop robe restart-emacs rbenv rake rainbow-delimiters quelpa popwin persp-mode pcache paradox ox-qmd orgit org-present org-pomodoro org-plus-contrib org-download org-bullets open-junk-file neotree move-text mmm-mode minitest markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc ido-vertical-mode howm hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet golden-ratio gnuplot gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-gutter-fringe git-gutter-fringe+ gh-md geeknote flycheck-pos-tip flx-ido fill-column-indicator feature-mode fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu enh-ruby-mode emmet-mode elisp-slime-nav edit-server edbi diff-hl define-word dash-at-point company-web company-tern company-statistics column-enforce-mode coffee-mode clean-aindent-mode chruby cdb ccc bundler auto-yasnippet auto-highlight-symbol auto-compile adaptive-wrap ace-window ace-jump-helm-line ac-ispell)))
+ '(paradox-github-token t)
+ '(plantuml-jar-path "/usr/local/Cellar/plantuml/8048/libexec/plantuml.jar")
+ '(plantuml-java-args (quote ("-Djava.awt.headless=true" "-jar" "-tpng"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
