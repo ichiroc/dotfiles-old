@@ -92,6 +92,8 @@ PERL_MM_OPT="INSTALL_BASE=~/perl5"; export PERL_MM_OPT;
 export PATH="$HOME/.rbenv/bin:$PATH"
 eval "$(rbenv init -)"
 
+export EDITOR="emacsclient"
 alias r="bundle exec rails"
 alias be="bundle exec"
 alias h="heroku"
+source ~/perl5/perlbrew/etc/bashrc
