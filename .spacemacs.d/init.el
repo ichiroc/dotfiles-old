@@ -48,13 +48,14 @@ values."
      org
      org-task
      ruby-on-rails
-     (ruby :variables ruby-enable-enh-ruby-mode nil)
+     (ruby :variables ruby-enable-enh-ruby-mode t)
      javascript
      html
      react
      yaml
      evernote
      chrome
+     themes-megapack
      ;; (shell :variables
      ;;        shell-default-height 30
      ;;        shell-default-position 'bottom)
@@ -67,25 +68,25 @@ values."
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(
-                                      rainbow-mode
-                                      (grep-edit :location (recipe :fetcher url :repo "https://www.emacswiki.org/emacs/download/grep-edit.el"))
-                                      lispxmp
-                                      flycheck-plantuml
-                                      plantuml-mode
-                                      ox-pandoc
-                                      quickrun
-                                      howm
-                                      edbi
-                                      ddskk
-                                      enh-ruby-mode
                                       coffee-mode
-                                      highlight-indent-guides
-                                      js2-mode
-                                      ox-reveal
-                                      ox-gfm
-                                      ox-qmd
-                                      yari
+                                      ddskk
+                                      edbi
+                                      enh-ruby-mode
+                                      flycheck-plantuml
                                       helm-dash
+                                      highlight-indent-guides
+                                      howm
+                                      js2-mode
+                                      lispxmp
+                                      ox-gfm
+                                      ox-pandoc
+                                      ox-qmd
+                                      ox-reveal
+                                      plantuml-mode
+                                      quickrun
+                                      rainbow-mode
+                                      wgrep
+                                      yari
                                       )
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '()
@@ -562,9 +563,10 @@ TITLE the title of the new note to be created."
 
   ;;; rails
   (projectile-rails-global-mode)
+
   (add-hook 'projectile-rails-mode-hook
             '(lambda ()
-               (dolist (mode '(haml-mode))
+               (dolist (mode '(haml-mode coffee-mode css-mode scss-mode js2-mode))
                  (spacemacs/set-leader-keys-for-major-mode mode
                    "rfa" 'projectile-rails-find-locale
                    "rfc" 'projectile-rails-find-controller
@@ -608,7 +610,8 @@ TITLE the title of the new note to be created."
                    "ri" 'projectile-rails-console
                    "rxs" 'projectile-rails-server
                    ;; Refactoring 'projectile-rails-mode
-                   "rRx" 'projectile-rails-extract-region)
+                   "rRx" 'projectile-rails-extract-region
+                   )
                  (spacemacs/declare-prefix-for-mode mode "mr" "rails/rubocop")
                  (spacemacs/declare-prefix-for-mode mode "mrf" "file"))))
 
@@ -625,6 +628,10 @@ TITLE the title of the new note to be created."
   ;; howm
   (require 'howm)
   ;; keybind "w" is Wiki
+  ;; http://blechmusik.hatenablog.jp/entry/2013/07/09/015124
+  (setq howm-process-coding-system 'utf-8-unix)
+  (setq howm-view-use-grep t)
+  (setq howm-view-grep-file-stdin-option nil)
   (spacemacs/set-leader-keys "a w w" 'howm-create)
   (spacemacs/set-leader-keys "a w m" 'howm-menu)
   (spacemacs/set-leader-keys "a w g" 'howm-list-grep)
@@ -636,6 +643,20 @@ TITLE the title of the new note to be created."
   (evil-make-overriding-map howm-menu-mode-map 'normal)
   (evil-make-overriding-map howm-view-contents-mode-map 'normal)
   (add-to-list 'auto-mode-alist (cons (concat (expand-file-name howm-directory ) ".*") 'markdown-mode))
+
+  (with-eval-after-load "dash"
+    (setq dash-at-point-mode-alist
+          (delete (assoc 'ruby-mode dash-at-point-mode-alist) dash-at-point-mode-alist))
+    (add-to-list 'dash-at-point-mode-alist
+                 '(ruby-mode . "rubygems,rails,ruby"))
+    (setq dash-at-point-mode-alist
+          (delete (assoc 'haml-mode dash-at-point-mode-alist) dash-at-point-mode-alist))
+    (add-to-list 'dash-at-point-mode-alist
+                 '(haml-mode . "rubygems,rails,ruby,bootstrap,haml"))
+    (add-to-list 'dash-at-point-mode-alist
+                 '(coffee-mode . "jquery,javascript,bootstrap"))
+    )
+
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -646,55 +667,7 @@ TITLE the title of the new note to be created."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(company-global-modes (quote (not markdown-mode)))
- '(dash-at-point-mode-alist
-   (quote
-    ((actionscript-mode . "actionscript")
-     (arduino-mode . "arduino")
-     (c++-mode . "cpp,net,boost,qt,cvcpp,cocos2dx,c,manpages")
-     (c-mode . "c,glib,gl2,gl3,gl4,manpages")
-     (caml-mode . "ocaml")
-     (clojure-mode . "clojure")
-     (coffee-mode . "coffee")
-     (common-lisp-mode . "lisp")
-     (cperl-mode . "perl")
-     (css-mode . "css,bootstrap,foundation,less,awesome,cordova,phonegap")
-     (dart-mode . "dartlang,polymerdart,angulardart")
-     (elixir-mode . "elixir")
-     (emacs-lisp-mode . "elisp")
-     (enh-ruby-mode . "ruby,rails,rubygems")
-     (erlang-mode . "erlang")
-     (gfm-mode . "markdown")
-     (go-mode . "go,godoc")
-     (groovy-mode . "groovy")
-     (haml-mode . "rails,ruby,rubygems,rails,haml,bootstrap")
-     (haskell-mode . "haskell")
-     (html-mode . "html,svg,css,bootstrap,foundation,awesome,javascript,jquery,jqueryui,jquerym,angularjs,backbone,marionette,meteor,moo,prototype,ember,lodash,underscore,sencha,extjs,knockout,zepto,cordova,phonegap,yui")
-     (jade-mode . "jade")
-     (java-mode . "java,javafx,grails,groovy,playjava,spring,cvj,processing,javadoc")
-     (js2-mode . "javascript,backbone,angularjs")
-     (js3-mode . "nodejs")
-     (latex-mode . "latex")
-     (less-css-mode . "less")
-     (lua-mode . "lua,corona")
-     (markdown-mode . "markdown")
-     (nginx-mode . "nginx")
-     (objc-mode . "cpp,iphoneos,macosx,appledoc,cocoapods,cocos2dx,cocos2d,cocos3d,kobold2d,sparrow,c,manpages")
-     (perl-mode . "perl,manpages")
-     (php-mode . "php,wordpress,drupal,zend,laravel,yii,joomla,ee,codeigniter,cakephp,phpunit,symfony,typo3,twig,smarty,phpp,html,mysql,sqlite,mongodb,psql,redis")
-     (processing-mode . "processing")
-     (puppet-mode . "puppet")
-     (python-mode . "python3,django,twisted,sphinx,flask,tornado,sqlalchemy,numpy,scipy,saltcvp")
-     (enh-ruby-mode . "rubygems,rails,ruby")
-     (ruby-mode . "rubygems,rails,ruby")
-     (rust-mode . "rust")
-     (sass-mode . "sass,compass,bourbon,neat,css")
-     (scala-mode . "scala,akka,playscala,scaladoc")
-     (stylus-mode . "stylus")
-     (tcl-mode . "tcl")
-     (tuareg-mode . "ocaml")
-     (twig-mode . "twig")
-     (vim-mode . "vim")
-     (yaml-mode . "chef,ansible"))))
+ '(evil-want-Y-yank-to-eol nil)
  '(indent-guide-delay 0.1 t)
  '(mac-pass-command-to-system nil)
  '(mac-pass-control-to-system t)
@@ -702,7 +675,7 @@ TITLE the title of the new note to be created."
  '(org-agenda-files (quote ("~/Documents/org/tasks.org")))
  '(package-selected-packages
    (quote
-    (rainbow-mode lispxmp company-quickhelp flycheck-plantuml plantuml-mode ox-pandoc ht ox-gfm iedit projectile quickrun org alert log4e gntp json-snatcher json-reformat multiple-cursors haml-mode ham-mode markdown-mode html-to-markdown gitignore-mode fringe-helper git-gutter+ git-gutter pos-tip flycheck epc ctable concurrent deferred web-completion-data dash-functional tern company auto-complete highlight-indent-guides csv-mode yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic which-key web-mode rspec-mode pug-mode projectile-rails inflections org-projectile info+ indent-guide hungry-delete htmlize helm-dash helm-ag google-translate git-link evil-matchit evil-magit dumb-jump ddskk aggressive-indent ace-link smartparens bind-map highlight helm helm-core yasnippet skewer-mode js2-mode magit magit-popup git-commit with-editor hydra inf-ruby spacemacs-theme yari yaml-mode ws-butler window-numbering web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tagedit spaceline smeargle slim-mode simple-httpd scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop robe restart-emacs rbenv rake rainbow-delimiters quelpa popwin persp-mode pcache paradox ox-qmd orgit org-present org-pomodoro org-plus-contrib org-download org-bullets open-junk-file neotree move-text mmm-mode minitest markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc ido-vertical-mode howm hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet golden-ratio gnuplot gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-gutter-fringe git-gutter-fringe+ gh-md geeknote flycheck-pos-tip flx-ido fill-column-indicator feature-mode fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu enh-ruby-mode emmet-mode elisp-slime-nav edit-server edbi diff-hl define-word dash-at-point company-web company-tern company-statistics column-enforce-mode coffee-mode clean-aindent-mode chruby cdb ccc bundler auto-yasnippet auto-highlight-symbol auto-compile adaptive-wrap ace-window ace-jump-helm-line ac-ispell)))
+    (zonokai-theme zenburn-theme zen-and-art-theme underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme tao-theme tangotango-theme tango-plus-theme tango-2-theme sunny-day-theme sublime-themes subatomic256-theme subatomic-theme spacegray-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme seti-theme reverse-theme railscasts-theme purple-haze-theme professional-theme planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme pastels-on-dark-theme organic-green-theme omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme niflheim-theme naquadah-theme mustang-theme monokai-theme monochrome-theme molokai-theme moe-theme minimal-theme material-theme majapahit-theme lush-theme light-soap-theme jbeans-theme jazz-theme ir-black-theme inkpot-theme heroku-theme hemisu-theme hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme gandalf-theme flatui-theme flatland-theme firebelly-theme farmhouse-theme espresso-theme dracula-theme django-theme darktooth-theme autothemer darkokai-theme darkmine-theme darkburn-theme dakrone-theme cyberpunk-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes afternoon-theme wgrep rainbow-mode lispxmp company-quickhelp flycheck-plantuml plantuml-mode ox-pandoc ht ox-gfm iedit projectile quickrun org alert log4e gntp json-snatcher json-reformat multiple-cursors haml-mode ham-mode markdown-mode html-to-markdown gitignore-mode fringe-helper git-gutter+ git-gutter pos-tip flycheck epc ctable concurrent deferred web-completion-data dash-functional tern company auto-complete highlight-indent-guides csv-mode yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic which-key web-mode rspec-mode pug-mode projectile-rails inflections org-projectile info+ indent-guide hungry-delete htmlize helm-dash helm-ag google-translate git-link evil-matchit evil-magit dumb-jump ddskk aggressive-indent ace-link smartparens bind-map highlight helm helm-core yasnippet skewer-mode js2-mode magit magit-popup git-commit with-editor hydra inf-ruby spacemacs-theme yari yaml-mode ws-butler window-numbering web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tagedit spaceline smeargle slim-mode simple-httpd scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop robe restart-emacs rbenv rake rainbow-delimiters quelpa popwin persp-mode pcache paradox ox-qmd orgit org-present org-pomodoro org-plus-contrib org-download org-bullets open-junk-file neotree move-text mmm-mode minitest markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc ido-vertical-mode howm hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet golden-ratio gnuplot gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-gutter-fringe git-gutter-fringe+ gh-md geeknote flycheck-pos-tip flx-ido fill-column-indicator feature-mode fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu enh-ruby-mode emmet-mode elisp-slime-nav edit-server edbi diff-hl define-word dash-at-point company-web company-tern company-statistics column-enforce-mode coffee-mode clean-aindent-mode chruby cdb ccc bundler auto-yasnippet auto-highlight-symbol auto-compile adaptive-wrap ace-window ace-jump-helm-line ac-ispell)))
  '(paradox-github-token t)
  '(plantuml-jar-path "/usr/local/Cellar/plantuml/8048/libexec/plantuml.jar")
  '(plantuml-java-args (quote ("-Djava.awt.headless=true" "-jar" "-tpng"))))
@@ -711,5 +684,4 @@ TITLE the title of the new note to be created."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
- '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
+ )
