@@ -89,6 +89,7 @@ values."
                                       quickrun
                                       rainbow-mode
                                       typing
+                                      wgrep
                                       yaml-mode
                                       zeal-at-point
                                       )
@@ -221,7 +222,7 @@ values."
    ;; Size (in MB) above which spacemacs will prompt to open the large file
    ;; literally to avoid performance issues. Opening a file literally means that
    ;; no major mode or minor modes are active. (default is 1)
-   dotspacemacs-large-file-size 15
+   dotspacemacs-large-file-size 1
    ;; Location where to auto-save files. Possible values are `original' to
    ;; auto-save the file in-place, `cache' to auto-save the file to another
    ;; file stored in the cache directory and `nil' to disable auto-saving.
@@ -350,10 +351,6 @@ you should place your code here."
   ;; 画面からはみ出した行を折り返さない(パフォーマンスに影響する場合がある)
   (setq default-truncate-lines t)
 
-  ;; auto-save-buffers-enhanced スペースを自動的に削除する処理と相性が悪いので不採用
-  ;; (auto-save-buffers-enhanced t)
-  ;; (spacemacs/set-leader-keys "ts" 'auto-save-buffers-enhanced-toggle-activity)
-
   ;; for Windows
   (setq process-coding-system-alist '(("[pP][lL][iI][nN][kK]" undecided-dos . undecided-dos)
                                       ("[cC][mM][dD][pP][rR][oO][xX][yY]" cp932-dos . cp932-dos)))
@@ -377,9 +374,9 @@ you should place your code here."
   (define-key evil-ex-completion-map (kbd "C-b") 'backward-char)
 
   ;; company
-  (define-key company-active-map (kbd "C-n") 'company-select-next)
-  (define-key company-active-map (kbd "C-p") 'company-select-previous)
-  (define-key company-active-map (kbd "C-h") 'delete-backward-char)
+  ;; (define-key company-active-map (kbd "C-n") 'company-select-next)
+  ;; (define-key company-active-map (kbd "C-p") 'company-select-previous)
+  ;; (define-key company-active-map (kbd "C-h") 'delete-backward-char)
 
   ;; org-mode
   (setq org-directory "~/Documents/org")
@@ -388,6 +385,10 @@ you should place your code here."
   (spacemacs/set-leader-keys "C C" 'org-capture)
   (spacemacs/set-leader-keys "o c" 'org-capture)
   (spacemacs/set-leader-keys "f a" '(lambda () (interactive) (find-file (-first-item org-agenda-files))))
+
+  ;; ox-*
+  (require 'ox-reveal)
+  (require 'ox-md)
 
   ;; org-columns
   (spacemacs/set-leader-keys-for-major-mode 'org-agenda-mode "o" 'org-agenda-columns)
@@ -408,33 +409,27 @@ you should place your code here."
                                  "* TODO %? \n[[%:link][%:description]] \nCaptured On: %U")
                                 ))
 
-
   (setq org-refile-targets '((nil  :maxlevel . 6)))
   (setq org-todo-keywords
         '((sequence "TODO(t)" "WAIT(w)" "|" "DEFFER(d)" "CANCELED(c)" "DONE(x)")))
-
-  ;; for org-protocol outlook
-  ;; outlook もリンクできるようにする
-  ;;(load-file "~/.spacemacs.d/org-open-at-point-monkey-patch.el")
-  ;; (add-to-list 'org-link-types "outlook")
-  ;; (setq org-link-types-re
-  ;;       "\\`\\(outlook\\|b\\(?:bdb\\|ibtex\\)\\|do\\(?:cview\\|i\\)\\|elisp\\|f\\(?:ile\\(?:\\+\\(?:\\(?:emac\\|sy\\)s\\)\\)?\\|tp\\)\\|gnus\\|h\\(?:elp\\|ttps?\\)\\|i\\(?:nfo\\|rc\\)\\|m\\(?:ailto\\|\\(?:essag\\|h\\)e\\)\\|news\\|orgit\\(?:-\\(?:log\\|rev\\)\\)?\\|\\(?:rmai\\|shel\\)l\\):")
 
   ;; org clock
   (global-set-key (kbd "C-c C-x C-j") 'org-clock-goto)
   (spacemacs/set-leader-keys "a o j" 'org-clock-goto)
   (defvar my-org-clock-in-shell-buffer-name "*ORG-CLOCK-IN-BUFFER*")
-  (add-hook 'org-clock-in-hook '(lambda () (interactive)
-                                  (async-shell-command (concat "taskviewer"
-                                                               " \""
-                                                               (format-time-string "[%H:%M] " org-clock-start-time)
-                                                               (encode-coding-string org-clock-heading 'cp932)
-                                                               "\" "
-                                                               (number-to-string (- (display-pixel-height) 160))
-                                                               " "
-                                                               (number-to-string (- (display-pixel-width)  420)))
-                                                       (get-buffer-create my-org-clock-in-shell-buffer-name))
-                                  (delete-other-windows)))
+  (add-hook 'org-clock-in-hook
+            '(lambda () (interactive)
+               (async-shell-command (concat "taskviewer"
+                                            " \""
+                                            (format-time-string "[%H:%M] " org-clock-start-time)
+                                            (encode-coding-string org-clock-heading 'cp932)
+                                            "\" "
+                                            (number-to-string (- (display-pixel-height) 160))
+                                            " "
+                                            (number-to-string (- (display-pixel-width)  420)))
+                                    (get-buffer-create my-org-clock-in-shell-buffer-name))
+               (delete-other-windows)))
+
   (defun my-org-clock-kill-taskviewer ()
     (interactive)
     (shell-command "taskkill /im:taskviewer.exe")
@@ -466,16 +461,16 @@ you should place your code here."
       (org-set-property prop-name (number-to-string (1+ (string-to-number prop-value))))
       ))
   ;; org-pomodoro のログ記録
-  (add-hook 'org-pomodoro-started-hook '(lambda () (interactive) (my-org-clock-increment-property "Pomodoro_Started")))
+  (add-hook 'org-pomodoro-started-hook  '(lambda () (interactive) (my-org-clock-increment-property "Pomodoro_Started")))
   (add-hook 'org-pomodoro-finished-hook '(lambda () (interactive) (my-org-clock-increment-property "Pomodoro_Finished")))
-  (add-hook 'org-pomodoro-killed-hook '(lambda () (interactive) (my-org-clock-increment-property "Pomodoro_Killed")))
+  (add-hook 'org-pomodoro-killed-hook   '(lambda () (interactive) (my-org-clock-increment-property "Pomodoro_Killed")))
 
   ;; task を完了したら自動的に org-pomodoro を finish
-  (add-hook 'org-after-todo-state-change-hook '(lambda () (interactive)
-                                                 (when ((-contains-p org-done-keywords org-state)
-                                                        (not (s-equals-p org-pomodoro-state ":pomodoro")))
-                                                   (org-pomodoro-finished)
-                                                   )))
+  (defun my-org-pomodoro-finish ()
+    (interactive)
+    (when (and (boundp 'org-pomodoro-state)
+                (not (s-equals-p org-pomodoro-state ":pomodoro")))
+      (org-pomodoro-finished)))
 
   ;; org-pomodoro notification
   (add-hook 'org-pomodoro-finished-hook '(lambda () (interactive)(shell-command "msg console Take a break :)")))
@@ -517,6 +512,13 @@ you should place your code here."
    (setq ruby-deep-indent-paren nil) ;;
    ;; rails
    (projectile-rails-global-mode t)
+   (defun projectile-rails-find-policy ()
+     "Find a policy."
+     (interactive)
+     (projectile-rails-find-resource
+      "policy: "
+      '(("app/policies/" "/policies/\\(.+?\\)\\(_policy\\)?\\.rb$"))
+      "app/policies/${filename}_policy.rb"))
 
   ;; ddskk
   (setq skk-large-jisyo "~/skk/SKK-JISYO.L")
@@ -529,8 +531,18 @@ you should place your code here."
   (add-hook 'evil-normal-state-entry-hook
             '(lambda ()
                (skk-mode -1)))
-  (add-hook 'rinari-minor-mode-hook
-            (lambda () (setq zeal-at-point-docset "rails")))
+
+  ;;zeal
+  (with-eval-after-load "zeal-at-point"
+    (add-to-list 'exec-path "C:/Program Files (x86)/Zeal")
+    (setq zeal-at-point-zeal-version "0.3.1")
+    (setq
+     zeal-at-point-mode-alist
+     (remove (assoc 'ruby-mode zeal-at-point-mode-alist)
+             zeal-at-point-mode-alist))
+    (add-to-list 'zeal-at-point-mode-alist
+                 '(ruby-mode . "rails,ruby"))
+    )
 
   (defun my-skk-c-j ()
     (interactive)
@@ -646,6 +658,7 @@ View mode for aquaAll.log
     ;; markdown で mmm-mode をまとめて定義する
     (-each '(
              "css"
+             "coffee"
              "dos"
              "emacs-lisp"
              "haml"
@@ -656,9 +669,10 @@ View mode for aquaAll.log
              "lisp"
              "plantuml"
              "sh"
+             "sql"
              "web"
              "yaml"
-             );;引数にメジャーモードの関数 -modeを抜いた文字列のリストを渡す
+             )
       '(lambda (mode-name)
          (let ((md-class (intern (concat "markdown-" mode-name))))
            (mmm-add-classes
@@ -669,20 +683,18 @@ View mode for aquaAll.log
                         :back "^```$")))
            (mmm-add-mode-ext-class 'markdown-mode nil md-class)
            )))
-    ;; (mmm-add-classes
-    ;;  '((markdown-elisp :submode emacs-lisp-mode :front "^```elisp[\n]+" :back "^```$")))
-    ;; (mmm-add-classes
-    ;;  '((markdown-dos :submode dos-mode :face mmm-declaration-submode-face :front "^```dos[\n]+" :back "^```$")))
-    ;; (mmm-add-classes
-    ;;  '((markdown-plantuml :submode plantuml-mode :face mmm-declaration-submode-face :front "^```plantuml[\n]+" :back "^```$")))
-    ;; ;; クラスとメジャーモードを紐付け
-    ;; (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-dos)
-    ;; (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-elisp)
-    ;; (mmm-add-mode-ext-class 'markdown-mode nil 'markdown-plantuml)
+    ;; ruby でSQLを色づけする
+    (mmm-add-classes '((ruby-sql-class
+                       :submode sql-mode
+                       :face 'mmm-declaration-submode-face
+                       :front "<<[-~]?[\"']?SQL[\"']?.*"
+                       :back "SQL"
+                        )))
+    (mmm-add-mode-ext-class 'ruby-mode nil 'ruby-sql-class)
     )
+
   ;; howm
   ;; keybind "w" is Wiki
-  ;;  (setq howm-view-title-header "#")
   (require 'howm)
   (spacemacs/set-leader-keys "a w w" 'howm-create)
   (spacemacs/set-leader-keys "a w m" 'howm-menu)
@@ -695,6 +707,7 @@ View mode for aquaAll.log
   (evil-make-overriding-map howm-menu-mode-map 'normal)
   (evil-make-overriding-map howm-view-contents-mode-map 'normal)
   (add-to-list 'auto-mode-alist (cons (concat (expand-file-name howm-directory ) ".*") 'markdown-mode))
+  (setq howm-view-grep-command "grep")
 
   ;; python
   (remove-hook 'python-mode-hook 'anaconda-mode)
@@ -723,6 +736,7 @@ View mode for aquaAll.log
      (minibuffer . t)
      (menu-bar-lines . t))))
  '(evil-want-Y-yank-to-eol nil)
+ '(js-indent-level 2)
  '(logview-additional-submodes
    (quote
     (("AquaAllLog"
@@ -744,7 +758,7 @@ View mode for aquaAll.log
        (todo "TODO"
              ((org-agenda-sorting-strategy
                (quote
-                (priority-up)))
+                (priority-down)))
               (org-agenda-overriding-header "本日やるタスク"))))
       nil)
      ("o" "List of all TODO entry ( only \"TODO\" )" todo "TODO" nil)
@@ -765,7 +779,7 @@ View mode for aquaAll.log
  '(org-startup-indented t)
  '(package-selected-packages
    (quote
-    (auto-save-buffers-enhanced rainbow-mode utop tuareg caml ocp-indent merlin plantuml-mode logview datetime log4j-mode powerline spinner autothemer bind-key highlight bind-map highlight-indent-guides minitest hide-comnt quickrun howm yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic geeknote ox-reveal pcache hydra projectile iedit anzu smartparens evil undo-tree helm helm-core avy async f s helm-dash powershell zonokai-theme zenburn-theme zen-and-art-theme underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme tao-theme tangotango-theme tango-plus-theme tango-2-theme sunny-day-theme sublime-themes subatomic256-theme subatomic-theme stekene-theme spacegray-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme seti-theme reverse-theme railscasts-theme purple-haze-theme professional-theme planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme pastels-on-dark-theme organic-green-theme omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme niflheim-theme naquadah-theme mustang-theme monokai-theme monochrome-theme molokai-theme moe-theme minimal-theme material-theme majapahit-theme lush-theme light-soap-theme jbeans-theme jazz-theme ir-black-theme inkpot-theme heroku-theme hemisu-theme hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme gandalf-theme flatui-theme flatland-theme firebelly-theme farmhouse-theme espresso-theme dracula-theme django-theme darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme cyberpunk-theme colorsarenice-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes afternoon-theme enh-ruby-mode edbi epc ctable concurrent ddskk cdb calfw zeal-at-point yaml-mode typing japanese-holidays imenu-list deferred ccc csv-nav google-maps orgit magit-gitflow evil-magit magit magit-popup web-mode web-beautify visual-basic-mode tagedit swift-mode sql-indent smeargle slim-mode scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv pug-mode projectile-rails rake inflections org-projectile org-present org org-pomodoro alert log4e gntp org-download mmm-mode markdown-toc livid-mode skewer-mode simple-httpd less-css-mode json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc htmlize helm-gitignore helm-css-scss helm-company helm-c-yasnippet haml-mode gnuplot gmail-message-mode ham-mode markdown-mode html-to-markdown gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md feature-mode git-commit with-editor dash emmet-mode edit-server csv-mode company-web web-completion-data company-tern dash-functional tern company-statistics company coffee-mode chruby bundler inf-ruby auto-yasnippet yasnippet ac-ispell auto-complete ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spacemacs-theme spaceline restart-emacs request rainbow-delimiters quelpa popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide ido-vertical-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line)))
+    (wgrep auto-save-buffers-enhanced rainbow-mode utop tuareg caml ocp-indent merlin plantuml-mode logview datetime log4j-mode powerline spinner autothemer bind-key highlight bind-map highlight-indent-guides minitest hide-comnt quickrun howm yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic geeknote ox-reveal pcache hydra projectile iedit anzu smartparens evil undo-tree helm helm-core avy async f s helm-dash powershell zonokai-theme zenburn-theme zen-and-art-theme underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme tao-theme tangotango-theme tango-plus-theme tango-2-theme sunny-day-theme sublime-themes subatomic256-theme subatomic-theme stekene-theme spacegray-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme seti-theme reverse-theme railscasts-theme purple-haze-theme professional-theme planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme pastels-on-dark-theme organic-green-theme omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme niflheim-theme naquadah-theme mustang-theme monokai-theme monochrome-theme molokai-theme moe-theme minimal-theme material-theme majapahit-theme lush-theme light-soap-theme jbeans-theme jazz-theme ir-black-theme inkpot-theme heroku-theme hemisu-theme hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme gandalf-theme flatui-theme flatland-theme firebelly-theme farmhouse-theme espresso-theme dracula-theme django-theme darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme cyberpunk-theme colorsarenice-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes afternoon-theme enh-ruby-mode edbi epc ctable concurrent ddskk cdb calfw zeal-at-point yaml-mode typing japanese-holidays imenu-list deferred ccc csv-nav google-maps orgit magit-gitflow evil-magit magit magit-popup web-mode web-beautify visual-basic-mode tagedit swift-mode sql-indent smeargle slim-mode scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv pug-mode projectile-rails rake inflections org-projectile org-present org org-pomodoro alert log4e gntp org-download mmm-mode markdown-toc livid-mode skewer-mode simple-httpd less-css-mode json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc htmlize helm-gitignore helm-css-scss helm-company helm-c-yasnippet haml-mode gnuplot gmail-message-mode ham-mode markdown-mode html-to-markdown gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md feature-mode git-commit with-editor dash emmet-mode edit-server csv-mode company-web web-completion-data company-tern dash-functional tern company-statistics company coffee-mode chruby bundler inf-ruby auto-yasnippet yasnippet ac-ispell auto-complete ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spacemacs-theme spaceline restart-emacs request rainbow-delimiters quelpa popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide ido-vertical-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line)))
  '(paradox-github-token t)
  '(web-mode-attr-value-indent-offset nil)
  '(web-mode-markup-indent-offset 2))
