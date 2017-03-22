@@ -402,7 +402,7 @@ you should place your code here."
   (require 'org-protocol)
   (setq org-capture-templates `(
                                 ("c" "Task" entry (file+headline ,(car org-agenda-files) "Inbox")
-                                 "* TODO %^{Title} :inbox:\n")
+                                 "* TODO %^{Title}\n")
                                 ("p" "Protocol" entry (file+headline ,(car org-agenda-files) "Inbox")
                                  "* TODO %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
                                 ("L" "Protocol Link" entry (file+headline ,(car org-agenda-files) "Inbox")
