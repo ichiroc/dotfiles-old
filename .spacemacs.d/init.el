@@ -48,7 +48,7 @@ values."
      org
      org-task
      ruby-on-rails
-     (ruby :variables ruby-enable-enh-ruby-mode t)
+     (ruby :variables ruby-enable-enh-ruby-mode nil) ;;; mmm-mode と相性が悪いの enh-ruby-mode は無効化
      javascript
      html
      react
@@ -68,16 +68,16 @@ values."
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(
+                                      ag
                                       coffee-mode
-                                      ddskk
+                                      ;; ddskk
                                       edbi
-                                      enh-ruby-mode
                                       flycheck-plantuml
-                                      helm-dash
+                                      ;; helm-dash
                                       highlight-indent-guides
                                       howm
                                       js2-mode
-                                      lispxmp
+                                      ;; lispxmp
                                       ox-gfm
                                       ox-pandoc
                                       ox-qmd
@@ -337,10 +337,13 @@ explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
   ;; General
+  (spacemacs/toggle-truncate-lines-on)
   (setq truncate-lines t)
   (setq mac-command-modifier 'meta)
   (setq mac-option-modifier 'meta)
   (setq max-lisp-eval-depth 2000)
+  (setq frame-title-format
+        (format "%%f - Emacs@%s" (system-name)))
 
   ;; emacs-macの時だけ normal state に入ったらIMEをオフにする
   (defun my-mac-select-ascii-input-source ()
@@ -362,7 +365,7 @@ you should place your code here."
   (evil-ex-define-cmd "wm" 'save-buffer)
 
   ;; 見にくいので縦にウィンドウを分割するのを抑止
-  (setq split-width-threshold nil)
+  ;; (setq split-width-threshold nil)
   ;; General keybind
   (evil-global-set-key 'hybrid (kbd "C-h") 'delete-backward-char)
   (define-key company-active-map (kbd "C-h") 'delete-backward-char)
@@ -381,27 +384,30 @@ you should place your code here."
   ;; : のミニバッファで c-b c-a を有効にする
   (define-key evil-ex-completion-map (kbd "C-b") 'backward-char)
   (define-key evil-ex-completion-map (kbd "C-a") 'beginning-of-line)
+  ;; M-t C-t で文字が入れ替わるのは全く必要ないので無効化
+  (global-set-key (kbd "C-t") nil)
+  (global-set-key (kbd "M-t") nil)
 
   ;; jsx
   (add-to-list 'auto-mode-alist '("\\.jsx$" . js2-jsx-mode))
 
   ;; skk
-  (skk-preload)
-  ;;  dict
-  (setq skk-large-jisyo "~/.skk/SKK-JISYO.L")
-  (setq skk-extra-jisyo-file-list '("~/.skk/SKK-JISYO.geo"
-                                    "~/.skk/SKK-JISYO.jinmei"
-                                    "~/.skk/SKK-JISYO.propernoun"
-                                    "~/.skk/SKK-JISYO.station"))
-  (defun my-skk-c-j ()
-    (interactive)
-    (if skk-henkan-mode
-        (skk-kakutei)
-      (skk-mode 1)))
-  ;; C-j でひらがなモードに戻る。ただし変換中は確定にする
-  (evil-global-set-key 'hybrid (kbd "C-j") 'my-skk-c-j)
-  ;; delete キーで文字が削除できなかったので再マップ
-  (evil-define-key 'hybrid skk-j-mode-map (kbd "<backspace>") 'backward-delete-char)
+  ;; (skk-preload)
+  ;; ;;  dict
+  ;; (setq skk-large-jisyo "~/.skk/SKK-JISYO.L")
+  ;; (setq skk-extra-jisyo-file-list '("~/.skk/SKK-JISYO.geo"
+  ;;                                   "~/.skk/SKK-JISYO.jinmei"
+  ;;                                   "~/.skk/SKK-JISYO.propernoun"
+  ;;                                   "~/.skk/SKK-JISYO.station"))
+  ;; (defun my-skk-c-j ()
+  ;;   (interactive)
+  ;;   (if skk-henkan-mode
+  ;;       (skk-kakutei)
+  ;;     (skk-mode 1)))
+  ;; ;; C-j でひらがなモードに戻る。ただし変換中は確定にする
+  ;; (evil-global-set-key 'hybrid (kbd "C-j") 'my-skk-c-j)
+  ;; ;; delete キーで文字が削除できなかったので再マップ
+  ;; (evil-define-key 'hybrid skk-j-mode-map (kbd "<backspace>") 'backward-delete-char)
 
   ;; yas
   (evil-global-set-key 'hybrid (kbd "M-i") 'yas-expand)
@@ -421,14 +427,14 @@ you should place your code here."
 # ^ non-nil の場合にときに実行される
 # --
 $0")
-  ;; skk key
-  (setq skk-sticky-key ";")
-  (define-key minibuffer-local-map (kbd "C-x C-j") '(lambda () (interactive) (skk-mode t)))
-  (define-key evil-ex-completion-map (kbd "C-x C-j") '(lambda () (interactive) (skk-mode t)))
-  (define-key evil-ex-completion-map (kbd "C-x C-j") '(lambda () (interactive) (skk-mode t)))
-  (evil-global-set-key 'hybrid (kbd "C-j") 'my-skk-c-j)
-  (evil-global-set-key 'hybrid (kbd "C-x C-j") '(lambda () (interactive) (skk-mode t)))
-  (add-hook 'evil-normal-state-entry-hook '(lambda () (interactive) (skk-mode -1)))
+  ;; ;; skk key
+  ;; (setq skk-sticky-key ";")
+  ;; (define-key minibuffer-local-map (kbd "C-x C-j") '(lambda () (interactive) (skk-mode t)))
+  ;; (define-key evil-ex-completion-map (kbd "C-x C-j") '(lambda () (interactive) (skk-mode t)))
+  ;; (define-key evil-ex-completion-map (kbd "C-x C-j") '(lambda () (interactive) (skk-mode t)))
+  ;; (evil-global-set-key 'hybrid (kbd "C-j") 'my-skk-c-j)
+  ;; (evil-global-set-key 'hybrid (kbd "C-x C-j") '(lambda () (interactive) (skk-mode t)))
+  ;; (add-hook 'evil-normal-state-entry-hook '(lambda () (interactive) (skk-mode -1)))
 
   ;; company-mode
   (with-eval-after-load "markdown-mode"
@@ -532,6 +538,7 @@ TITLE the title of the new note to be created."
   (with-eval-after-load "mmm-mode"
     (-each '("sh"
              "haml"
+             "coffee"
              "html"
              "css"
              "html-erb"
@@ -673,6 +680,9 @@ TITLE the title of the new note to be created."
  '(mac-pass-control-to-system t)
  '(markdown-command "markdown2")
  '(org-agenda-files (quote ("~/Documents/org/tasks.org")))
+ '(package-selected-packages
+   (quote
+    (ag zonokai-theme zenburn-theme zen-and-art-theme underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme tao-theme tangotango-theme tango-plus-theme tango-2-theme sunny-day-theme sublime-themes subatomic256-theme subatomic-theme spacegray-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme seti-theme reverse-theme railscasts-theme purple-haze-theme professional-theme planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme pastels-on-dark-theme organic-green-theme omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme niflheim-theme naquadah-theme mustang-theme monokai-theme monochrome-theme molokai-theme moe-theme minimal-theme material-theme majapahit-theme lush-theme light-soap-theme jbeans-theme jazz-theme ir-black-theme inkpot-theme heroku-theme hemisu-theme hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme gandalf-theme flatui-theme flatland-theme firebelly-theme farmhouse-theme espresso-theme dracula-theme django-theme darktooth-theme autothemer darkokai-theme darkmine-theme darkburn-theme dakrone-theme cyberpunk-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes afternoon-theme wgrep rainbow-mode lispxmp company-quickhelp flycheck-plantuml plantuml-mode ox-pandoc ht ox-gfm iedit projectile quickrun org alert log4e gntp json-snatcher json-reformat multiple-cursors haml-mode ham-mode markdown-mode html-to-markdown gitignore-mode fringe-helper git-gutter+ git-gutter pos-tip flycheck epc ctable concurrent deferred web-completion-data dash-functional tern company auto-complete highlight-indent-guides csv-mode yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic which-key web-mode rspec-mode pug-mode projectile-rails inflections org-projectile info+ indent-guide hungry-delete htmlize helm-dash helm-ag google-translate git-link evil-matchit evil-magit dumb-jump ddskk aggressive-indent ace-link smartparens bind-map highlight helm helm-core yasnippet skewer-mode js2-mode magit magit-popup git-commit with-editor hydra inf-ruby spacemacs-theme yari yaml-mode ws-butler window-numbering web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tagedit spaceline smeargle slim-mode simple-httpd scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop robe restart-emacs rbenv rake rainbow-delimiters quelpa popwin persp-mode pcache paradox ox-qmd orgit org-present org-pomodoro org-plus-contrib org-download org-bullets open-junk-file neotree move-text mmm-mode minitest markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc ido-vertical-mode howm hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet golden-ratio gnuplot gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-gutter-fringe git-gutter-fringe+ gh-md geeknote flycheck-pos-tip flx-ido fill-column-indicator feature-mode fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu enh-ruby-mode emmet-mode elisp-slime-nav edit-server edbi diff-hl define-word dash-at-point company-web company-tern company-statistics column-enforce-mode coffee-mode clean-aindent-mode chruby cdb ccc bundler auto-yasnippet auto-highlight-symbol auto-compile adaptive-wrap ace-window ace-jump-helm-line ac-ispell)))
  '(paradox-github-token t)
  '(plantuml-jar-path "/usr/local/Cellar/plantuml/8048/libexec/plantuml.jar")
  '(plantuml-java-args (quote ("-Djava.awt.headless=true" "-jar" "-tpng"))))
