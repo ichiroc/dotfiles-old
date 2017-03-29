@@ -337,8 +337,7 @@ explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
   ;; General
-  (spacemacs/toggle-truncate-lines-on)
-  (setq truncate-lines t)
+  (setq default-truncate-lines t)
   (setq mac-command-modifier 'meta)
   (setq mac-option-modifier 'meta)
   (setq max-lisp-eval-depth 2000)
