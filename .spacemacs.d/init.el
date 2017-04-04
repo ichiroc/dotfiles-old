@@ -27,7 +27,7 @@ values."
    ;; If non-nil layers with lazy install support are lazy installed.
    ;; List of additional paths where to look for configuration layers.
    ;; Paths must have a trailing slash (i.e. `~/.mycontribs/')
-   dotspacemacs-configuration-layer-path '()
+   dotspacemacs-configuration-layer-path '("~/.spacemacs.d/layers/")
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
@@ -146,7 +146,6 @@ values."
    ;; the form `(list-type . list-size)`. If nil then it is disabled.
    ;; Possible values for list-type are:
    ;; `recents' `bookmarks' `projects' `agenda' `todos'."
-   ;; Example for 5 recent files and 7 projects: '((recents . 5) (projects . 7))
    ;; List sizes may be nil, in which case
    ;; `spacemacs-buffer-startup-lists-length' takes effect.
    ;; (default nil)
@@ -170,10 +169,10 @@ values."
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
    ;; size to make separators look not too crappy.
    dotspacemacs-default-font '("Ricty Diminished for Powerline"
-                               :size 16
+                               :size 15
                                :weight normal
                                :width normal
-                               :powerline-scale 1.1)
+                               :powerline-scale 1.3)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
    ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
@@ -283,10 +282,23 @@ values."
    ;; scrolling overrides the default behavior of Emacs which recenters point
    ;; when it reaches the top or bottom of the screen. (default t)
    dotspacemacs-smooth-scrolling t
-   ;; If non nil line numbers are turned on in all `prog-mode' and `text-mode'
-   ;; derivatives. If set to `relative', also turns on relative line numbers.
+   ;; Control line numbers activation.
+   ;; If set to `t' or `relative' line numbers are turned on in all `prog-mode' and
+   ;; `text-mode' derivatives. If set to `relative', line numbers are relative.
+   ;; This variable can also be set to a property list for finer control:
+   ;; '(:relative nil
+   ;;   :disabled-for-modes dired-mode
+   ;;                       doc-view-mode
+   ;;                       markdown-mode
+   ;;                       org-mode
+   ;;                       pdf-view-mode
+   ;;                       text-mode
+   ;;   :size-limit-kb 1000)
    ;; (default nil)
-   dotspacemacs-line-numbers 'prog-mode
+   dotspacemacs-line-numbers '(:relative t)
+   ;; Code folding method. Possible values are `evil' and `origami'.
+   ;; (default 'evil)
+   dotspacemacs-folding-method 'evil
    ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
    ;; (default nil)
    dotspacemacs-smartparens-strict-mode nil
@@ -343,6 +355,7 @@ you should place your code here."
   (setq max-lisp-eval-depth 2000)
   (setq frame-title-format
         (format "%%f - Emacs@%s" (system-name)))
+  (setq bidi-display-reordering nil)
 
   ;; emacs-macの時だけ normal state に入ったらIMEをオフにする
   (defun my-mac-select-ascii-input-source ()
@@ -367,7 +380,6 @@ you should place your code here."
   ;; (setq split-width-threshold nil)
   ;; General keybind
   (evil-global-set-key 'hybrid (kbd "C-h") 'delete-backward-char)
-  (define-key company-active-map (kbd "C-h") 'delete-backward-char)
   (evil-global-set-key 'hybrid (kbd "<C-tab>") 'yas-expand)
   (define-key minibuffer-local-map (kbd "C-h") 'delete-backward-char)
   (-each '(normal insert motion visual hybrid)
@@ -442,9 +454,12 @@ $0")
   (setq auto-completion-enable-help-tooltip t)
   (setq auto-completion-enable-snippets-in-popup t)
 
-  (define-key company-active-map (kbd "C-n") 'company-select-next)
-  (define-key company-active-map (kbd "C-p") 'company-select-previous)
-  (define-key company-active-map (kbd "C-s") 'company-filter-candidates)
+  (with-eval-after-load "company"
+    (define-key company-active-map (kbd "C-h") 'delete-backward-char)
+    (define-key company-active-map (kbd "C-n") 'company-select-next)
+    (define-key company-active-map (kbd "C-p") 'company-select-previous)
+    (define-key company-active-map (kbd "C-s") 'company-filter-candidates)
+    )
 
   ;; edbi
   (setenv "PERL5LIB" "/Users/ichiro/perl5/lib/perl5")
@@ -510,7 +525,7 @@ TITLE the title of the new note to be created."
        (define-key helm-find-files-map (kbd "C-i") 'helm-execute-persistent-action)))
   (eval-after-load "helm-org"
     '(progn
-       (define-key helm-map (kbd "C-j") 'my-skk-c-j)
+
        ))
 
   ;; markdown
