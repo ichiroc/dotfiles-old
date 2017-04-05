@@ -153,7 +153,6 @@ values."
    ;; the form `(list-type . list-size)`. If nil then it is disabled.
    ;; Possible values for list-type are:
    ;; `recents' `bookmarks' `projects' `agenda' `todos'."
-   ;; Example for 5 recent files and 7 projects: '((recents . 5) (projects . 7))
    ;; List sizes may be nil, in which case
    ;; `spacemacs-buffer-startup-lists-length' takes effect.
    ;; (default nil)
@@ -165,15 +164,14 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(;;monokai
-                         spacemacs-dark
+   dotspacemacs-themes '(spacemacs-dark
                          spacemacs-light)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    dotspacemacs-default-font '("TakaoGothic"
-                               :size 15
+                               :size 13
                                :weight normal
                                :width normal
                                :powerline-scale 1.1)
@@ -222,7 +220,7 @@ values."
    ;; Size (in MB) above which spacemacs will prompt to open the large file
    ;; literally to avoid performance issues. Opening a file literally means that
    ;; no major mode or minor modes are active. (default is 1)
-   dotspacemacs-large-file-size 1
+   dotspacemacs-large-file-size 20
    ;; Location where to auto-save files. Possible values are `original' to
    ;; auto-save the file in-place, `cache' to auto-save the file to another
    ;; file stored in the cache directory and `nil' to disable auto-saving.
@@ -286,10 +284,23 @@ values."
    ;; scrolling overrides the default behavior of Emacs which recenters point
    ;; when it reaches the top or bottom of the screen. (default t)
    dotspacemacs-smooth-scrolling t
-   ;; If non nil line numbers are turned on in all `prog-mode' and `text-mode'
-   ;; derivatives. If set to `relative', also turns on relative line numbers.
+   ;; Control line numbers activation.
+   ;; If set to `t' or `relative' line numbers are turned on in all `prog-mode' and
+   ;; `text-mode' derivatives. If set to `relative', line numbers are relative.
+   ;; This variable can also be set to a property list for finer control:
+   ;; '(:relative nil
+   ;;   :disabled-for-modes dired-mode
+   ;;                       doc-view-mode
+   ;;                       markdown-mode
+   ;;                       org-mode
+   ;;                       pdf-view-mode
+   ;;                       text-mode
+   ;;   :size-limit-kb 1000)
    ;; (default nil)
-   dotspacemacs-line-numbers 'prog-mode
+   dotspacemacs-line-numbers '(:relative t
+                                         :enabled-for-modes prog-mode
+                                         :size-limit-kb 200000
+                                         )
    ;; Code folding method. Possible values are `evil' and `origami'.
    ;; (default 'evil)
    dotspacemacs-folding-method 'evil
@@ -343,21 +354,26 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
   ;; General
-  (setq truncate-lines t)
   (setq find-program "c:/tools/msys64/usr/bin/find.exe")
   ;; フルパスのファイル名をタイトルバーに表示
   (setq frame-title-format
          (format "%%f - Emacs@%s" (system-name)))
   ;; 画面からはみ出した行を折り返さない(パフォーマンスに影響する場合がある)
   (setq default-truncate-lines t)
+  ;; 右から左に流れる文字を表示しない設定。長い行が含まれる際のパフォーマンスを上げる
+  ;;http://emacs.stackexchange.com/questions/598/how-do-i-prevent-extremely-long-lines-making-emacs-slow
+  (setq bidi-display-reordering nil)
 
   ;; for Windows
   (setq process-coding-system-alist '(("[pP][lL][iI][nN][kK]" undecided-dos . undecided-dos)
                                       ("[cC][mM][dD][pP][rR][oO][xX][yY]" cp932-dos . cp932-dos)))
-  (add-hook 'kill-emacs-hook '(lambda () (interactive)
+ (add-hook 'kill-emacs-hook '(lambda () (interactive)
                                 (recentf-cleanup)
                                 (recentf-save-list)))
-  (when (fboundp 'ime-force-off)
+ ;; (set-face-attribute 'default nil :family "Source Code Pro" :height 100)
+ ;; (set-fontset-font nil 'japanese-jisx0208 (font-spec :family "TakaoGothic"))
+ ;; (setq face-font-rescale-alist '(("TakaoGothic" . 1.2 )))
+ (when (fboundp 'ime-force-off)
     (add-hook 'evil-normal-state-entry-hook 'ime-force-off)
     (setq w32-ime-show-mode-line nil)
     )
@@ -367,7 +383,8 @@ you should place your code here."
       (evil-global-set-key state (kbd "C-;") 'helm-for-files)
       ))
   (global-set-key (kbd "C-@") 'evil-normal-state)
-
+  ;; 横分割されるとテーブルが見にくいので常に水平に分割する
+  (setq split-width-threshold nil)
   (evil-global-set-key 'hybrid (kbd "C-h") 'delete-backward-char)
   (define-key minibuffer-local-map (kbd "C-h") 'delete-backward-char)
   ;; evil 置換する際に c-b で戻れないと不便
@@ -693,6 +710,14 @@ View mode for aquaAll.log
                        :back "SQL"
                         )))
     (mmm-add-mode-ext-class 'ruby-mode nil 'ruby-sql-class)
+    ;; ruby で JS を色づけする
+    (mmm-add-classes '((ruby-js-class
+                        :submode js2-mode
+                        :face 'mmm-declaration-submode-face
+                        :front "<<[-~]?[\"']?JS[\"']?.*"
+                        :back "JS"
+                        )))
+    (mmm-add-mode-ext-class 'ruby-mode nil 'ruby-js-class)
     )
 
   ;; howm
@@ -781,7 +806,7 @@ View mode for aquaAll.log
  '(org-startup-indented t)
  '(package-selected-packages
    (quote
-    (wgrep auto-save-buffers-enhanced rainbow-mode utop tuareg caml ocp-indent merlin plantuml-mode logview datetime log4j-mode powerline spinner autothemer bind-key highlight bind-map highlight-indent-guides minitest hide-comnt quickrun howm yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic geeknote ox-reveal pcache hydra projectile iedit anzu smartparens evil undo-tree helm helm-core avy async f s helm-dash powershell zonokai-theme zenburn-theme zen-and-art-theme underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme tao-theme tangotango-theme tango-plus-theme tango-2-theme sunny-day-theme sublime-themes subatomic256-theme subatomic-theme stekene-theme spacegray-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme seti-theme reverse-theme railscasts-theme purple-haze-theme professional-theme planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme pastels-on-dark-theme organic-green-theme omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme niflheim-theme naquadah-theme mustang-theme monokai-theme monochrome-theme molokai-theme moe-theme minimal-theme material-theme majapahit-theme lush-theme light-soap-theme jbeans-theme jazz-theme ir-black-theme inkpot-theme heroku-theme hemisu-theme hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme gandalf-theme flatui-theme flatland-theme firebelly-theme farmhouse-theme espresso-theme dracula-theme django-theme darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme cyberpunk-theme colorsarenice-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes afternoon-theme enh-ruby-mode edbi epc ctable concurrent ddskk cdb calfw zeal-at-point yaml-mode typing japanese-holidays imenu-list deferred ccc csv-nav google-maps orgit magit-gitflow evil-magit magit magit-popup web-mode web-beautify visual-basic-mode tagedit swift-mode sql-indent smeargle slim-mode scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv pug-mode projectile-rails rake inflections org-projectile org-present org org-pomodoro alert log4e gntp org-download mmm-mode markdown-toc livid-mode skewer-mode simple-httpd less-css-mode json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc htmlize helm-gitignore helm-css-scss helm-company helm-c-yasnippet haml-mode gnuplot gmail-message-mode ham-mode markdown-mode html-to-markdown gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md feature-mode git-commit with-editor dash emmet-mode edit-server csv-mode company-web web-completion-data company-tern dash-functional tern company-statistics company coffee-mode chruby bundler inf-ruby auto-yasnippet yasnippet ac-ispell auto-complete ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spacemacs-theme spaceline restart-emacs request rainbow-delimiters quelpa popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide ido-vertical-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line)))
+    (package-build wgrep auto-save-buffers-enhanced rainbow-mode utop tuareg caml ocp-indent merlin plantuml-mode logview datetime log4j-mode powerline spinner autothemer bind-key highlight bind-map highlight-indent-guides minitest hide-comnt quickrun howm yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic geeknote ox-reveal pcache hydra projectile iedit anzu smartparens evil undo-tree helm helm-core avy async f s helm-dash powershell zonokai-theme zenburn-theme zen-and-art-theme underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme tao-theme tangotango-theme tango-plus-theme tango-2-theme sunny-day-theme sublime-themes subatomic256-theme subatomic-theme stekene-theme spacegray-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme seti-theme reverse-theme railscasts-theme purple-haze-theme professional-theme planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme pastels-on-dark-theme organic-green-theme omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme niflheim-theme naquadah-theme mustang-theme monokai-theme monochrome-theme molokai-theme moe-theme minimal-theme material-theme majapahit-theme lush-theme light-soap-theme jbeans-theme jazz-theme ir-black-theme inkpot-theme heroku-theme hemisu-theme hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme gandalf-theme flatui-theme flatland-theme firebelly-theme farmhouse-theme espresso-theme dracula-theme django-theme darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme cyberpunk-theme colorsarenice-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes afternoon-theme enh-ruby-mode edbi epc ctable concurrent ddskk cdb calfw zeal-at-point yaml-mode typing japanese-holidays imenu-list deferred ccc csv-nav google-maps orgit magit-gitflow evil-magit magit magit-popup web-mode web-beautify visual-basic-mode tagedit swift-mode sql-indent smeargle slim-mode scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv pug-mode projectile-rails rake inflections org-projectile org-present org org-pomodoro alert log4e gntp org-download mmm-mode markdown-toc livid-mode skewer-mode simple-httpd less-css-mode json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc htmlize helm-gitignore helm-css-scss helm-company helm-c-yasnippet haml-mode gnuplot gmail-message-mode ham-mode markdown-mode html-to-markdown gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md feature-mode git-commit with-editor dash emmet-mode edit-server csv-mode company-web web-completion-data company-tern dash-functional tern company-statistics company coffee-mode chruby bundler inf-ruby auto-yasnippet yasnippet ac-ispell auto-complete ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spacemacs-theme spaceline restart-emacs request rainbow-delimiters quelpa popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint info+ indent-guide ido-vertical-mode hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line)))
  '(paradox-github-token t)
  '(web-mode-attr-value-indent-offset nil)
  '(web-mode-markup-indent-offset 2))
