@@ -411,6 +411,40 @@ you should place your code here."
   (spacemacs/set-leader-keys-for-major-mode 'org-agenda-mode "o" 'org-agenda-columns)
   (spacemacs/set-leader-keys-for-major-mode 'org-mode "o" 'org-columns)
 
+  ;; org clock table
+  ;; http://sachachua.com/blog/2007/12/clocking-time-with-emacs-org/ を改変(各日ごとに計算を区切った)
+  ;; 下のコメントを入れることで各日ごとに作業時間集計を出す
+  ;; #+BEGIN: rangereport :maxlevel 4 :scope file :tags "" :tstart "<-1w>" :tend "<+1d>"
+  ;; #+END:
+  (defun org-dblock-write:rangereport (params)
+  "Display day-by-day time reports."
+  (let* ((ts (plist-get params :tstart))
+         (te (plist-get params :tend))
+         (start (time-to-seconds
+                 (apply 'encode-time (org-parse-time-string ts))))
+         (end (time-to-seconds
+               (apply 'encode-time (org-parse-time-string te))))
+         day-numbers)
+    (setq params (plist-put params :tstart nil))
+    (setq params (plist-put params :end nil))
+    (while (<= start end)
+      (save-excursion
+        (insert "\n\n"
+                (format-time-string (car org-time-stamp-formats)
+                                    (seconds-to-time start))
+                "----------------\n")
+        (org-dblock-write:clocktable
+         (plist-put
+          (plist-put
+           params
+           :tstart
+           (format-time-string (car org-time-stamp-formats)
+                               (seconds-to-time start)))
+          :tend
+          (format-time-string (car org-time-stamp-formats)
+                              (seconds-to-time (+ start 86400))))) ;; ここを改変 end -> (+ start 86400)
+        (setq start (+ 86400 start))))))
+
   ;; org priority
   (setq org-highest-priority ?1)
   (setq org-default-priority ?5)
