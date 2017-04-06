@@ -370,9 +370,7 @@ you should place your code here."
  (add-hook 'kill-emacs-hook '(lambda () (interactive)
                                 (recentf-cleanup)
                                 (recentf-save-list)))
- ;; (set-face-attribute 'default nil :family "Source Code Pro" :height 100)
- ;; (set-fontset-font nil 'japanese-jisx0208 (font-spec :family "TakaoGothic"))
- ;; (setq face-font-rescale-alist '(("TakaoGothic" . 1.2 )))
+
  (when (fboundp 'ime-force-off)
     (add-hook 'evil-normal-state-entry-hook 'ime-force-off)
     (setq w32-ime-show-mode-line nil)
