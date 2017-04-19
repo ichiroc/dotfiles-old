@@ -776,10 +776,8 @@ View mode for aquaAll.log
        (with-temp-buffer
          (shell-command (concat "pandoc -f html -t markdown " url)
                         (current-buffer))
-         (setq markdown-text (buffer-string))
-         )
-       (insert markdown-text)
-       ))
+         (setq markdown-text (buffer-string)))
+       (insert markdown-text)))
 
   ;; python
   (remove-hook 'python-mode-hook 'anaconda-mode)
