@@ -809,6 +809,7 @@ View mode for aquaAll.log
      (menu-bar-lines . t))))
  '(evil-want-Y-yank-to-eol nil)
  '(js-indent-level 2)
+ '(js2-strict-trailing-comma-warning nil)
  '(logview-additional-submodes
    (quote
     (("AquaAllLog"
