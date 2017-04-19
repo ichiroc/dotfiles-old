@@ -74,6 +74,7 @@ values."
                                       edbi
                                       flycheck-plantuml
                                       ;; helm-dash
+                                      helm-robe
                                       highlight-indent-guides
                                       howm
                                       js2-mode
@@ -166,13 +167,13 @@ values."
                          zenburn)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
-   ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
-   ;; size to make separators look not too crappy.
-   dotspacemacs-default-font '("Ricty Diminished for Powerline"
-                               :size 15
+   ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
+   ;; quickly tweak the mode-line size to make separators look not too crappy.
+   dotspacemacs-default-font '("TakaoGothic"
+                               :size 16
                                :weight normal
                                :width normal
-                               :powerline-scale 1.3)
+                               :powerline-scale 1.1)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
    ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
@@ -377,10 +378,11 @@ you should place your code here."
   (evil-ex-define-cmd "wm" 'save-buffer)
 
   ;; 見にくいので縦にウィンドウを分割するのを抑止
-  ;; (setq split-width-threshold nil)
+  (setq split-width-threshold nil)
   ;; General keybind
   (evil-global-set-key 'hybrid (kbd "C-h") 'delete-backward-char)
   (evil-global-set-key 'hybrid (kbd "<C-tab>") 'yas-expand)
+  (evil-leader/set-key "xp" 'mmm-parse-buffer)
   (define-key minibuffer-local-map (kbd "C-h") 'delete-backward-char)
   (-each '(normal insert motion visual hybrid)
     (lambda (state)
@@ -464,6 +466,7 @@ $0")
   ;; edbi
   (setenv "PERL5LIB" "/Users/ichiro/perl5/lib/perl5")
   (setq edbi:ds-history-file "~/.emacs.d/.cache/.edbi-ds-hitory")
+  (setq edbi:query-result-fix-header nil)
 
   ;; mc/mark
   (setq mc/list-file "~/.emacs.d/.cache/.mc-lists.el")
@@ -696,7 +699,7 @@ TITLE the title of the new note to be created."
  '(org-agenda-files (quote ("~/Documents/org/tasks.org")))
  '(package-selected-packages
    (quote
-    (ag zonokai-theme zenburn-theme zen-and-art-theme underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme tao-theme tangotango-theme tango-plus-theme tango-2-theme sunny-day-theme sublime-themes subatomic256-theme subatomic-theme spacegray-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme seti-theme reverse-theme railscasts-theme purple-haze-theme professional-theme planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme pastels-on-dark-theme organic-green-theme omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme niflheim-theme naquadah-theme mustang-theme monokai-theme monochrome-theme molokai-theme moe-theme minimal-theme material-theme majapahit-theme lush-theme light-soap-theme jbeans-theme jazz-theme ir-black-theme inkpot-theme heroku-theme hemisu-theme hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme gandalf-theme flatui-theme flatland-theme firebelly-theme farmhouse-theme espresso-theme dracula-theme django-theme darktooth-theme autothemer darkokai-theme darkmine-theme darkburn-theme dakrone-theme cyberpunk-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes afternoon-theme wgrep rainbow-mode lispxmp company-quickhelp flycheck-plantuml plantuml-mode ox-pandoc ht ox-gfm iedit projectile quickrun org alert log4e gntp json-snatcher json-reformat multiple-cursors haml-mode ham-mode markdown-mode html-to-markdown gitignore-mode fringe-helper git-gutter+ git-gutter pos-tip flycheck epc ctable concurrent deferred web-completion-data dash-functional tern company auto-complete highlight-indent-guides csv-mode yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic which-key web-mode rspec-mode pug-mode projectile-rails inflections org-projectile info+ indent-guide hungry-delete htmlize helm-dash helm-ag google-translate git-link evil-matchit evil-magit dumb-jump ddskk aggressive-indent ace-link smartparens bind-map highlight helm helm-core yasnippet skewer-mode js2-mode magit magit-popup git-commit with-editor hydra inf-ruby spacemacs-theme yari yaml-mode ws-butler window-numbering web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tagedit spaceline smeargle slim-mode simple-httpd scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop robe restart-emacs rbenv rake rainbow-delimiters quelpa popwin persp-mode pcache paradox ox-qmd orgit org-present org-pomodoro org-plus-contrib org-download org-bullets open-junk-file neotree move-text mmm-mode minitest markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc ido-vertical-mode howm hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet golden-ratio gnuplot gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-gutter-fringe git-gutter-fringe+ gh-md geeknote flycheck-pos-tip flx-ido fill-column-indicator feature-mode fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu enh-ruby-mode emmet-mode elisp-slime-nav edit-server edbi diff-hl define-word dash-at-point company-web company-tern company-statistics column-enforce-mode coffee-mode clean-aindent-mode chruby cdb ccc bundler auto-yasnippet auto-highlight-symbol auto-compile adaptive-wrap ace-window ace-jump-helm-line ac-ispell)))
+    (smart-newline helm-robe ag zonokai-theme zenburn-theme zen-and-art-theme underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme tao-theme tangotango-theme tango-plus-theme tango-2-theme sunny-day-theme sublime-themes subatomic256-theme subatomic-theme spacegray-theme soothe-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme seti-theme reverse-theme railscasts-theme purple-haze-theme professional-theme planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme pastels-on-dark-theme organic-green-theme omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme niflheim-theme naquadah-theme mustang-theme monokai-theme monochrome-theme molokai-theme moe-theme minimal-theme material-theme majapahit-theme lush-theme light-soap-theme jbeans-theme jazz-theme ir-black-theme inkpot-theme heroku-theme hemisu-theme hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme gandalf-theme flatui-theme flatland-theme firebelly-theme farmhouse-theme espresso-theme dracula-theme django-theme darktooth-theme autothemer darkokai-theme darkmine-theme darkburn-theme dakrone-theme cyberpunk-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized clues-theme cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes afternoon-theme wgrep rainbow-mode lispxmp company-quickhelp flycheck-plantuml plantuml-mode ox-pandoc ht ox-gfm iedit projectile quickrun org alert log4e gntp json-snatcher json-reformat multiple-cursors haml-mode ham-mode markdown-mode html-to-markdown gitignore-mode fringe-helper git-gutter+ git-gutter pos-tip flycheck epc ctable concurrent deferred web-completion-data dash-functional tern company auto-complete highlight-indent-guides csv-mode yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic which-key web-mode rspec-mode pug-mode projectile-rails inflections org-projectile info+ indent-guide hungry-delete htmlize helm-dash helm-ag google-translate git-link evil-matchit evil-magit dumb-jump ddskk aggressive-indent ace-link smartparens bind-map highlight helm helm-core yasnippet skewer-mode js2-mode magit magit-popup git-commit with-editor hydra inf-ruby spacemacs-theme yari yaml-mode ws-butler window-numbering web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tagedit spaceline smeargle slim-mode simple-httpd scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop robe restart-emacs rbenv rake rainbow-delimiters quelpa popwin persp-mode pcache paradox ox-qmd orgit org-present org-pomodoro org-plus-contrib org-download org-bullets open-junk-file neotree move-text mmm-mode minitest markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint less-css-mode json-mode js2-refactor js-doc ido-vertical-mode howm hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet golden-ratio gnuplot gmail-message-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-gutter-fringe git-gutter-fringe+ gh-md geeknote flycheck-pos-tip flx-ido fill-column-indicator feature-mode fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu enh-ruby-mode emmet-mode elisp-slime-nav edit-server edbi diff-hl define-word dash-at-point company-web company-tern company-statistics column-enforce-mode coffee-mode clean-aindent-mode chruby cdb ccc bundler auto-yasnippet auto-highlight-symbol auto-compile adaptive-wrap ace-window ace-jump-helm-line ac-ispell)))
  '(paradox-github-token t)
  '(plantuml-jar-path "/usr/local/Cellar/plantuml/8048/libexec/plantuml.jar")
  '(plantuml-java-args (quote ("-Djava.awt.headless=true" "-jar" "-tpng"))))
