@@ -668,6 +668,17 @@ TITLE the title of the new note to be created."
   (evil-make-overriding-map howm-view-contents-mode-map 'normal)
   (add-to-list 'auto-mode-alist (cons (concat (expand-file-name howm-directory ) ".*") 'markdown-mode))
 
+  ;; 現在のカーソル位置にURLのテキストをマークダウン形式にして挿入する
+  ;; howm での利用を想定 pandocが必須
+  (defun my-insert-markdown-from-url (url)
+    (interactive "sURL: ")
+    (let ((markdown-text))
+      (with-temp-buffer
+        (shell-command (concat "pandoc -f html -t markdown " url)
+                       (current-buffer))
+        (setq markdown-text (buffer-string)))
+      (insert markdown-text)))
+
   (with-eval-after-load "dash"
     (setq dash-at-point-mode-alist
           (delete (assoc 'ruby-mode dash-at-point-mode-alist) dash-at-point-mode-alist))
