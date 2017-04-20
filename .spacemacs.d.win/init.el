@@ -774,7 +774,7 @@ View mode for aquaAll.log
      (interactive "sURL: ")
      (let ((markdown-text))
        (with-temp-buffer
-         (shell-command (concat "pandoc -f html -t markdown " url)
+         (shell-command (concat "pandoc --wrap=none -f html -t markdown " url)
                         (current-buffer))
          (setq markdown-text (buffer-string)))
        (insert markdown-text)))
@@ -785,7 +785,6 @@ View mode for aquaAll.log
 
   ;;plantuml
   (setq plantuml-jar-path "c:/tools/plantuml/plantuml.jar")
-
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
