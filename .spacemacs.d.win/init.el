@@ -353,6 +353,8 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+  (server-force-delete)
+  (server-start)
   ;; General
   (setq find-program "c:/tools/msys64/usr/bin/find.exe")
   ;; フルパスのファイル名をタイトルバーに表示
@@ -452,11 +454,11 @@ you should place your code here."
 
   (require 'org-protocol)
   (setq org-capture-templates `(
-                                ("c" "Task" entry (file+headline ,(car org-agenda-files) "Inbox")
+                                ("c" "Task" entry (file+headline ,(car org-agenda-files) "Tasks")
                                  "* TODO %^{Title}\n")
-                                ("p" "Protocol" entry (file+headline ,(car org-agenda-files) "Inbox")
+                                ("p" "Protocol" entry (file+headline ,(car org-agenda-files) "Tasks")
                                  "* TODO %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
-                                ("L" "Protocol Link" entry (file+headline ,(car org-agenda-files) "Inbox")
+                                ("L" "Protocol Link" entry (file+headline ,(car org-agenda-files) "Tasks")
                                  "* TODO %? \n[[%:link][%:description]] \nCaptured On: %U")
                                 ))
 
@@ -480,6 +482,23 @@ you should place your code here."
                                             (number-to-string (- (display-pixel-width)  420)))
                                     (get-buffer-create my-org-clock-in-shell-buffer-name))
                (delete-other-windows)))
+  ;; 突発的な仕事を簡単に登録する。
+  ;; 主にOSからのコマンドでの呼び出しを想定
+  (defun my-org-capture-task ()
+    (interactive)
+    (raise-frame)
+    (org-capture nil "c"))
+  ;; 突発的な仕事を簡単に登録してクロックインする。
+  ;; 主にOSからのコマンドでの呼び出しを想定
+  ;; org-capture-templates の clock-in を使うとヘッドラインが空で
+  ;; クロックインしてしまうので独自関数で定義
+  (defun my-org-capture-and-clock-in ()
+    (interactive)
+    (raise-frame)
+    (org-capture nil "c")
+    (org-clock-in))
+  (global-set-key (kbd "C-M-l") 'my-org-capture-and-clock-in)
+
 
   (defun my-org-clock-kill-taskviewer ()
     (interactive)
