@@ -365,6 +365,7 @@ you should place your code here."
   ;; 右から左に流れる文字を表示しない設定。長い行が含まれる際のパフォーマンスを上げる
   ;;http://emacs.stackexchange.com/questions/598/how-do-i-prevent-extremely-long-lines-making-emacs-slow
   (setq bidi-display-reordering nil)
+  (setq buffer-file-coding-system 'utf-8-unix)
 
   ;; for Windows
   (setq process-coding-system-alist '(("[pP][lL][iI][nN][kK]" undecided-dos . undecided-dos)
