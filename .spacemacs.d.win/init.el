@@ -48,6 +48,7 @@ values."
      dash
      emacs-lisp
      git
+     imenu-list
      markdown
      (org :variables org-enable-reveal-js-support t)
      ruby
