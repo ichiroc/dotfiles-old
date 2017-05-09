@@ -406,6 +406,8 @@ you should place your code here."
   (spacemacs/set-leader-keys "f a" '(lambda () (interactive) (find-file (-first-item org-agenda-files))))
   (define-key org-mode-map (kbd "M-l") 'org-indent-item)
   (define-key org-mode-map (kbd "M-h") 'org-outdent-item)
+  (define-key org-mode-map (kbd "C-+") 'org-priority-up)
+  (define-key org-mode-map (kbd "C-=") 'org-priority-down)
 
   ;; ox-*
   (require 'ox-reveal)
