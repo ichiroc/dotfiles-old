@@ -736,6 +736,8 @@ View mode for aquaAll.log
     ;; markdown で mmm-mode をまとめて定義する
     (-each '(
              "css"
+             "scss"
+             "sass"
              "coffee"
              "dos"
              "emacs-lisp"
