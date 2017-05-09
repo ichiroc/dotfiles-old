@@ -403,6 +403,8 @@ you should place your code here."
   (setq org-bullets-bullet-list '("■" "◆" "▲" "≫" "▶" "▷"))
   (setq org-mobile-directory (concat org-directory "/staging"))
   (setq org-mobile-inbox-for-pull (car org-agenda-files))
+  (add-hook 'org-mobile-post-push-hook (lambda ()(shell-command (expand-file-name (concat org-directory "/push-mobileorg.bat")))))
+  (add-hook 'org-mobile-post-pull-hooks (lambda ()(shell-command (expand-file-name (concat org-directory "/pull-mobileorg.bat")))))
   (spacemacs/set-leader-keys "C C" 'org-capture)
   (spacemacs/set-leader-keys "o c" 'org-capture)
   (spacemacs/set-leader-keys "f a" '(lambda () (interactive) (find-file (-first-item org-agenda-files))))
