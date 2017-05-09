@@ -50,7 +50,7 @@ ZSH_THEME="bullet-train"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git rails ruby brew emacs heroku mysql-macports rake rvm)
+plugins=(git rails ruby brew emacs heroku mysql-macports rake rvm bundler coffee tmux)
 
 # User configuration
 
@@ -97,3 +97,5 @@ alias r="bundle exec rails"
 alias be="bundle exec"
 alias h="heroku"
 source ~/perl5/perlbrew/etc/bashrc
+export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+alias rails_new_with_default_template="rails new -m https://raw.githubusercontent.com/ichiroc/rails_template/master/template.rb "
