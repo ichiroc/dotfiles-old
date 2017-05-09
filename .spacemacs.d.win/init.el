@@ -401,6 +401,8 @@ you should place your code here."
   (setq org-directory "~/Documents/org")
   (setq org-agenda-files '("~/Documents/org/tasks.org"))
   (setq org-bullets-bullet-list '("■" "◆" "▲" "≫" "▶" "▷"))
+  (setq org-mobile-directory (concat org-directory "/staging"))
+  (setq org-mobile-inbox-for-pull (car org-agenda-files))
   (spacemacs/set-leader-keys "C C" 'org-capture)
   (spacemacs/set-leader-keys "o c" 'org-capture)
   (spacemacs/set-leader-keys "f a" '(lambda () (interactive) (find-file (-first-item org-agenda-files))))
@@ -468,7 +470,7 @@ you should place your code here."
 
   (setq org-refile-targets '((nil  :maxlevel . 6)))
   (setq org-todo-keywords
-        '((sequence "TODO(t)" "WAIT(w)" "|" "DEFFER(d)" "CANCELED(c)" "DONE(x)")))
+        '((sequence "TODO(t)" "WAIT(w)" "|"  "DONE(x)" "DEFFER(d)" "CANCELED(c)")))
 
   ;; org clock
   (global-set-key (kbd "C-c C-x C-j") 'org-clock-goto)
