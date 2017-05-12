@@ -129,7 +129,7 @@ values."
    ;; when the current branch is not `develop'. Note that checking for
    ;; new versions works via git commands, thus it calls GitHub services
    ;; whenever you start Emacs. (default nil)
-   dotspacemacs-check-for-update t
+   dotspacemacs-check-for-update nil
    ;; If non-nil, a form that evaluates to a package directory. For example, to
    ;; use different package directories for different Emacs versions, set this
    ;; to `emacs-version'.
@@ -597,6 +597,50 @@ you should place your code here."
       "policy: "
       '(("app/policies/" "/policies/\\(.+?\\)\\(_policy\\)?\\.rb$"))
       "app/policies/${filename}_policy.rb"))
+   (spacemacs/set-leader-keys-for-minor-mode 'projectile-rails-mode
+          "rfa" 'projectile-rails-find-locale
+          "rfc" 'projectile-rails-find-controller
+          "rfe" 'projectile-rails-find-environment
+          "rff" 'projectile-rails-find-feature
+          "rfh" 'projectile-rails-find-helper
+          "rfi" 'projectile-rails-find-initializer
+          "rfj" 'projectile-rails-find-javascript
+          "rfl" 'projectile-rails-find-lib
+          "rfm" 'projectile-rails-find-model
+          "rfn" 'projectile-rails-find-migration
+          "rfo" 'projectile-rails-find-log
+          "rfp" 'projectile-rails-find-spec
+          "rfr" 'projectile-rails-find-rake-task
+          "rfs" 'projectile-rails-find-stylesheet
+          "rft" 'projectile-rails-find-test
+          "rfu" 'projectile-rails-find-fixture
+          "rfv" 'projectile-rails-find-view
+          "rfy" 'projectile-rails-find-layout
+          "rf@" 'projectile-rails-find-mailer
+          ;; Goto file
+          "rgc" 'projectile-rails-find-current-controller
+          "rgd" 'projectile-rails-goto-schema
+          "rge" 'projectile-rails-goto-seeds
+          "rgh" 'projectile-rails-find-current-helper
+          "rgj" 'projectile-rails-find-current-javascript
+          "rgg" 'projectile-rails-goto-gemfile
+          "rgm" 'projectile-rails-find-current-model
+          "rgn" 'projectile-rails-find-current-migration
+          "rgp" 'projectile-rails-find-current-spec
+          "rgr" 'projectile-rails-goto-routes
+          "rgs" 'projectile-rails-find-current-stylesheet
+          "rgt" 'projectile-rails-find-current-test
+          "rgu" 'projectile-rails-find-current-fixture
+          "rgv" 'projectile-rails-find-current-view
+          "rgz" 'projectile-rails-goto-spec-helper
+          "rg." 'projectile-rails-goto-file-at-point
+          ;; Rails external commands
+          "r:" 'projectile-rails-rake
+          "rcc" 'projectile-rails-generate
+          "ri" 'projectile-rails-console
+          "rxs" 'projectile-rails-server
+          ;; Refactoring 'projectile-rails-mode
+          "rRx" 'projectile-rails-extract-region)
 
   ;; ddskk
   (setq skk-large-jisyo "~/skk/SKK-JISYO.L")
@@ -703,6 +747,8 @@ you should place your code here."
 
   ;; jsx
   (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js2-jsx-mode))
+  (add-to-list 'auto-mode-alist '("\\.es6?\\'" . js2-jsx-mode))
+  (setq js2-strict-missing-semi-warning nil)
 
 ;;  (setq paradox-github-token "574b93aa47024de1894a550e93cd0d69f8f89c06")
   (setq paradox-github-token nil)
