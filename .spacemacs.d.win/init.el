@@ -57,6 +57,7 @@ values."
      swift
      noren
      vb
+     react
      ruby-on-rails
      html
      chrome
@@ -745,7 +746,7 @@ you should place your code here."
   (add-to-list 'file-coding-system-alist '("[T]F0004KE\\'" . cp932-dos))
   (add-to-list 'file-coding-system-alist '("aquaAll[0-9]\\.log.*" . cp932-dos))
 
-  ;; jsx
+  ;; javascript js2, jsx
   (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js2-jsx-mode))
   (add-to-list 'auto-mode-alist '("\\.es6?\\'" . js2-jsx-mode))
   (setq js2-strict-missing-semi-warning nil)
