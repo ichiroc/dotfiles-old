@@ -74,6 +74,7 @@ values."
                                       coffee-mode
                                       ;; ddskk
                                       edbi
+                                      string-inflection
                                       flycheck-plantuml
                                       ;; helm-dash
                                       helm-robe
