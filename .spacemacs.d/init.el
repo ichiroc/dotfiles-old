@@ -74,14 +74,10 @@ values."
                                       coffee-mode
                                       edbi
                                       edbi-sqlite
-                                      string-inflection
                                       flycheck-plantuml
-                                      ;; helm-dash
                                       helm-robe
                                       highlight-indent-guides
                                       howm
-                                      rjsx-mode
-                                      ;; lispxmp
                                       ox-gfm
                                       ox-pandoc
                                       ox-qmd
@@ -89,6 +85,8 @@ values."
                                       plantuml-mode
                                       quickrun
                                       rainbow-mode
+                                      rjsx-mode
+                                      string-inflection
                                       swift
                                       wgrep
                                       yari
