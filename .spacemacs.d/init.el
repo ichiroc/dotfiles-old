@@ -72,8 +72,8 @@ values."
    dotspacemacs-additional-packages '(
                                       ag
                                       coffee-mode
-                                      ;; ddskk
                                       edbi
+                                      edbi-sqlite
                                       string-inflection
                                       flycheck-plantuml
                                       ;; helm-dash
