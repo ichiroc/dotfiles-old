@@ -510,6 +510,9 @@ TITLE the title of the new note to be created."
 
   ;; ;; org-mode
   (require 'ox-pandoc)
+  (require 'ox-md)
+  (define-key org-mode-map (kbd "M-l") 'org-indent)
+  (define-key org-mode-map (kbd "M-h") 'org-outdent)
 
   ;; 翻訳
   (spacemacs/set-google-translate-languages "en" "ja")
