@@ -748,8 +748,8 @@ you should place your code here."
   (add-to-list 'file-coding-system-alist '("aquaAll[0-9]\\.log.*" . cp932-dos))
 
   ;; javascript js2, jsx
-  (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . js2-jsx-mode))
-  (add-to-list 'auto-mode-alist '("\\.es6?\\'" . js2-jsx-mode))
+  (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . rjsx-mode))
+  (add-to-list 'auto-mode-alist '("\\.es6?\\'" . rjsx-mode))
   (setq js2-strict-missing-semi-warning nil)
 
 ;;  (setq paradox-github-token "574b93aa47024de1894a550e93cd0d69f8f89c06")
