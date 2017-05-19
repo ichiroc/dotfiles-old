@@ -71,6 +71,7 @@ values."
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(
                                       ag
+                                      annotate
                                       coffee-mode
                                       edbi
                                       edbi-sqlite
