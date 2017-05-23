@@ -80,6 +80,12 @@ values."
                                       csv-nav
                                       ddskk
                                       edbi
+                                      (neotree
+                                       :location
+                                        (recipe
+                                         :fetcher git
+                                         :url "https://github.com/jaypei/emacs-neotree.git"
+                                         :branch "dev"))
                                       edit-server
                                       highlight-indent-guides
                                       howm
@@ -370,6 +376,8 @@ you should place your code here."
   ;;http://emacs.stackexchange.com/questions/598/how-do-i-prevent-extremely-long-lines-making-emacs-slow
   (setq bidi-display-reordering nil)
   (setq buffer-file-coding-system 'utf-8-unix)
+;;  (advice-remove 'imenu-default-goto-function 'xref-push-marker-stack)
+  (advice-remove 'imenu-default-goto-function '(lambda (x) (xref-push-marker-stack (point-marker))))
 
   ;; for Windows
   (setq process-coding-system-alist '(("[pP][lL][iI][nN][kK]" undecided-dos . undecided-dos)
@@ -894,6 +902,8 @@ View mode for aquaAll.log
       (aliases)))))
  '(magit-git-executable "c:/Program Files/Git/bin/git.exe")
  '(markdown-list-indent-width 2)
+ '(neo-autorefresh t)
+ '(neo-theme (quote ascii))
  '(org-agenda-custom-commands
    (quote
     (("a" "Agenda for a week from today and Todays task."
