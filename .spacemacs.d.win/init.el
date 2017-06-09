@@ -92,6 +92,7 @@ values."
                                       quickrun
                                       rainbow-mode
                                       rjsx-mode
+                                      ruby-refactor
                                       typing
                                       wgrep
                                       yaml-mode
