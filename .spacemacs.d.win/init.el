@@ -303,7 +303,7 @@ values."
    ;;                       text-mode
    ;;   :size-limit-kb 1000)
    ;; (default nil)
-   dotspacemacs-line-numbers '(:relative t
+   dotspacemacs-line-numbers '(:relative nil
                                          :enabled-for-modes prog-mode
                                          :size-limit-kb 200000
                                          )
@@ -692,6 +692,7 @@ you should place your code here."
        (define-key helm-map (kbd "C-M-p") 'helm-previous-source)
        (define-key helm-map (kbd "C-h") 'delete-backward-char)
        (define-key helm-map (kbd "C-j") 'my-skk-c-j)
+       (setq helm-truncate-lines t)     ; 長い候補を折り返すと遅くなるので折り返しOFF
      ))
   (eval-after-load "helm-files"
     '(progn
@@ -898,6 +899,7 @@ View mode for aquaAll.log
       (timestamp)
       (aliases)))))
  '(magit-git-executable "c:/Program Files/Git/bin/git.exe")
+ '(magit-git-output-coding-system (quote utf-8))
  '(markdown-list-indent-width 2)
  '(neo-autorefresh t)
  '(org-agenda-custom-commands
